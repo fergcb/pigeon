@@ -1,4 +1,4 @@
-from parser.matcher import Repeat, Symbol, RegExp
+from parser.matcher import Repeat, Symbol, RegExp, Lazy
 from parser.action import SimpleAction, Entoken, Select
 
 from parser.token import Token
@@ -32,11 +32,21 @@ def ArrayExpr():
 
 
 def FunctionExpr():
-    return RegExp(r"`?\S") >> Entoken(Token.FUNCTION)
+    return RegExp(r"`?[^\s{}R]") >> Entoken(Token.FUNCTION)
+
+
+def ScopeExpr():
+    return Symbol("{") + Repeat(Lazy(Expr)) + Symbol("}") \
+        >> Select(1) >> Entoken(Token.SCOPE)
+
+
+def RepeatExpr():
+    return Symbol("R") + Repeat(Lazy(Expr)) + Symbol("}") \
+        >> Select(1) >> Entoken(Token.REPEAT)
 
 
 def Expr():
-    return ArrayExpr() | LiteralExpr() | FunctionExpr()
+    return ArrayExpr() | LiteralExpr() | FunctionExpr() | RepeatExpr() | ScopeExpr()
 
 
 def Program():

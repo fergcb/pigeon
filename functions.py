@@ -199,6 +199,12 @@ define(":", [
         "A copy of the item on the top of the stack is pushed.")
 ], allow_arrays=False)
 
+# `: : DUPLICATE TWO
+define("`:", [
+    ((..., ...), lambda a, b, s: (a, b, a, b),
+        "A copy of the two items on the top of the stack are pushed.")
+], allow_arrays=False)
+
 # c : CYCLE - SWAP top two elements
 define("c", [
     ((..., ...), lambda a, b, s: (b, a),

@@ -1,3 +1,5 @@
+import copy
+
 import functions
 from parser.token import Token
 
@@ -37,26 +39,58 @@ def execute(symbol: str, stack: list) -> str:
     return desc
 
 
-def interpret(tokens: list[(Token, any)], explain: bool) -> list:
+def interpret(tokens: list[(Token, any)], explain: bool, stack=None, depth=0) -> list:
     """
     Execute a sequence of tokens on an empty stack,
     and return the resulting stack
     """
-    stack = []
+    stack = [] if stack is None else stack
+
+    indent = "    " * depth
 
     for token in tokens:
         match token:
             case (Token.LITERAL, x):
                 stack.append(x)
                 if explain:
-                    print(f"\nThe value {repr(x)} is pushed to the stack.")
+                    print(indent + f"The value {repr(x)} is pushed to the stack.")
             case (Token.FUNCTION, f):
                 desc = execute(f, stack)
                 if explain:
-                    print(f"\n({f}) {desc}")
+                    print(indent + f"({f}) {desc}")
+            case (Token.SCOPE, ts):
+                if len(stack) > 0 and type(stack[-1]) is int:
+                    n = stack.pop()
+                    args = stack[-n:]
+                    if explain:
+                        print(indent + f"({{) The program descends into a new scoped block with {n} arguments.")
+                        print(indent + f"     => {args}\n")
+                    ret = interpret(ts, explain, stack=copy.deepcopy(args), depth=depth+1)
+                    stack.extend(ret)
+                    if explain:
+                        print(indent + "(}) The program ascends to the parent scope and the return values are pushed.")
+                else:
+                    raise Exception("No argument found for scope. Must specify a number of args to copy.")
+            case (Token.REPEAT, ts):
+                if len(stack) > 0 and type(stack[-1]) is int:
+                    n = stack.pop()
+                    if explain:
+                        print(indent + "(R) The program enters a loop.")
+                        print(indent + f" => {stack}\n")
+                    for i in range(n):
+                        if explain:
+                            print(indent + f"Loop iteration {i+1}/{n}:")
+                            print(indent + f" => {stack}\n")
+                        interpret(ts, explain, stack=stack, depth=depth+1)
+                else:
+                    raise Exception("No argument found for loop.")
+
+                if explain:
+                    print(indent + "(}) The program exits the loop.")
+
             case _:
                 raise Exception(f"Invalid token {token}")
         if explain:
-            print(" =>", stack)
+            print(indent + f" => {stack}\n")
 
     return stack
