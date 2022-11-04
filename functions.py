@@ -167,6 +167,12 @@ define("^", [
         "An integer is popped, and a list of integers from 0 to that integer is pushed.")
 ])
 
+# u : UNWRAP
+define("u", [
+    ((list,), lambda a, s: tuple(a),
+        "A list is popped and each of its items are pushed.")
+])
+
 # i : INDEX
 define("i", [
     ((list, int), lambda A, b, s: A[b],
