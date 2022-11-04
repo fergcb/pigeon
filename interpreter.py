@@ -93,4 +93,7 @@ def interpret(tokens: list[(Token, any)], explain: bool, stack=None, depth=0) ->
         if explain:
             print(indent + f" => {stack}\n")
 
+    if depth == 0 and len(stack) > 0:
+        print(stack[-1])
+
     return stack
