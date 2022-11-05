@@ -23,6 +23,8 @@ def define(symbol: str, sigs: list[Signature], allow_arrays: bool = True):
     """
     Define a new function
     """
+    if symbol in _functions:
+        raise Exception(f"The symbol {symbol} is already bound to a function.")
     _functions[symbol] = Function(symbol, sigs, allow_arrays)
 
 
@@ -88,161 +90,187 @@ def match_args(arg_types: tuple, stack: list, allow_arrays: bool) -> bool:
 # + : ADD
 define("+", [
     ((list, list), lambda A, B, s: [a + b for a, b in zip(A, B)],
-        "Two lists are popped and their element-wise sum is pushed."),
+        "The element-wise sum of %a and %b is pushed."),
     ((int, int), lambda a, b, s: a + b,
-        "Two integers are popped and their sum is pushed."),
+        "%a + %b = %res is pushed."),
     ((str, ...), lambda a, b, s: a + str(b),
-        "Two items are popped an appended as strings."),
+        "%a and %b are appended as strings."),
     ((..., str), lambda a, b, s: str(a) + b,
-        "Two items are popped an appended as strings."),
+        "%a and %b are appended as strings."),
 ])
 
 # * : MULTIPLY
 define("*", [
     ((int, int), lambda a, b, s: a * b,
-        "Two integers are popped and their product is pushed."),
+        "%a × %b = %res is pushed."),
 ])
 
 # - : SUBTRACT, FILTER
 define("-", [
     ((list, list), lambda A, B, s: [a for a in A if a not in B],
-        "Two lists are popped, and a list containing elements in the second and not in the first is pushed."),
+        "The difference of %a and %b is pushed."),
     ((list, ...), lambda A, b, s: [a for a in A if a is not b],
-        "An item is popped and all instances of it are removed from a list on the top of the stack."),
+        "%b is removed from %a."),
     ((str, str), lambda a, b, s: a.replace(b, ""),
-        "A string is popped, and all instances of it are removed from the top string."),
+        "%b is removed from %a."),
     ((int, int), lambda a, b, s: a - b,
-        "Two integers are popped, and their difference is pushed."),
+        "%a - %b = %res is pushed."),
+])
+
+# / : DIVIDE
+define("/", [
+    ((int, int), lambda a, b, s: a / b,
+        "%a ÷ %b = %res is pushed."),
 ])
 
 # % : MODULO
 define("%", [
     ((int, int), lambda a, b, s: a % b,
-        "Two integers are pushed, and the remainder of integer division is pushed.")
+        "%a MOD %b = %res is pushed.")
 ])
 
 # & : AND
 define("&", [
     ((list, list), lambda A, B, s: [a and b for a, b in zip(A, B)],
-        "Two lists are popped, and their element-wise AND is pushed."),
+        "The element-wise AND of %a and %b is pushed."),
     ((..., ...), lambda a, b, s: a and b,
-        "Two items are popped and their short-circuiting AND is pushed.")
+        "The short-circuiting AND of %a and %b is pushed.")
 ])
 
 # | : OR
 define("|", [
     ((list, list), lambda A, B, s: [a or b for a, b in zip(A, B)],
-        "Two lists are popped, and their element-wise OR is pushed."),
+        "The element-wise OR of %a and %b is pushed."),
     ((..., ...), lambda a, b, s: a or b,
-        "Two items are popped and their short-circuiting OR is pushed.")
+        "The short-circuiting OR of %a and %b is pushed.")
 ])
 
 # j : JOIN
 define("j", [
     ((list, str), lambda A, b, s: b.join(map(str, A)),
-        "A string is popped and used to join the elements of the top list.")
+        "The elements of %a are joined on %b.")
 ])
 
-# l : LIST
-define("l", [
-    ((...,), lambda a, s: list(a),
-        "The top item is cast to a list.")
+# `l : LIST
+define("`l", [
+    ((str,), lambda a, s: list(a),
+        "%a is cast to a list.")
 ])
 
-# s : STRING
-define("s", [
+# `s : STRING
+define("`s", [
     ((...,), lambda a, s: str(a),
-        "The top item is cast to a string.")
+        "%a is cast to a string.")
 ])
 
-# n : NUM, cast to INT
-define("n", [
-    ((...,), lambda a, s: int(a),
-        "The top item is cast to an integer.")
+# `n : NUM, cast to INT
+define("`n", [
+    ((str,), lambda a, s: int(a),
+        "%a is cast to an integer.")
+])
+
+# `f : FLOAT, cast to float
+define("`f", [
+    ((str,), lambda a, s: float(a),
+        "%a is cast to a float, and pushed."),
+    ((int,), lambda a, s: float(a),
+        "%a is cast to a float, and pushed."),
 ])
 
 # ^ : RANGE
 define("^", [
     ((int,), lambda a, s: list(range(a)),
-        "An integer is popped, and a list of integers from 0 to that integer is pushed.")
+        "A list of integers from 0 to %a is pushed.")
 ])
 
 # u : UNWRAP
 define("u", [
     ((list,), lambda a, s: tuple(a),
-        "A list is popped and each of its items are pushed.")
+        "Each item of %a is pushed.")
+])
+
+# e : ENLIST
+define("e", [
+    ((int,), lambda a, s: list(reversed([s.pop() for i in range(a)])),
+        "A list of %a items popped from the stack is pushed.")
 ])
 
 # i : INDEX
 define("i", [
     ((list, int), lambda A, b, s: A[b],
-        "An integer is popped, and the element at that index of a popped list is pushed."),
+        "The %bth item of %a is pushed."),
     ((list, list), lambda A, B, s: [A[b] for b in B],
-        "Two lists are popped, and a list of elements from the second corresponding to indexes in the first is pushed.")
+        "A list of elements from %a corresponding to indexes in %b is pushed.")
+])
+
+# p : PARTITION
+define("p", [
+    ((list, int), lambda A, b, s: [A[i:i + b] for i in range(0, len(A), b)],
+        "%a is split into %b-item chunks."),
 ])
 
 # b : BITS
 define("b", [
     ((), lambda s: [0, 1],
-        "A list of the binary digits, 0 and 1, is pushed.")
+        "The list [0, 1] is pushed.")
 ])
 
 # t : TRUTHY
 define("t", [
     ((...,), lambda a, s: int(not not a),
-        "1 is pushed if a popped item is truthy, else 0 is pushed.")
+        "1 is pushed if the %ta %a is truthy, else 0 is pushed.")
 ])
 
 # f : FALSY
 define("f", [
     ((...,), lambda a, s: int(not a),
-        "1 is pushed if a popped item is falsy, else 0 is pushed.")
+        "1 is pushed if the %ta %a is falsy, else 0 is pushed.")
 ])
 
 # : : DUPLICATE
 define(":", [
     ((...,), lambda a, s: ((a, a) if type(a) is not list else (a[:], a[:])),
-        "A copy of the item on the top of the stack is pushed.")
+        "A copy of the %ta %a is pushed.")
 ], allow_arrays=False)
 
 # `: : DUPLICATE TWO
 define("`:", [
     ((..., ...), lambda a, b, s: (a, b, a, b),
-        "A copy of the two items on the top of the stack are pushed.")
+        "A copy each of the %ta %a and the %tb %b are pushed.")
 ], allow_arrays=False)
 
 # c : CYCLE - SWAP top two elements
 define("c", [
     ((..., ...), lambda a, b, s: (b, a),
-        "The two elements on the top of the stack are swapped.")
+        "The %ta %a and the %tb %b are swapped.")
 ], allow_arrays=False)
 
 # r : ROTATE
 define("r", [
     ((...,), lambda a, s: s.insert(0, a),
-        "Pop an item and move it to the bottom of the stack")
+        "The %ta %a is moved to the bottom of the stack")
 ], allow_arrays=False)
 
 # . : OUTPUT
 define(".", [
     ((...,), lambda a, s: print(a),
-        "Pop an item and output it."),
+        "The %ta %a is printed to the console."),
 ], allow_arrays=False)
 
 # , : INPUT
 define(",", [
-    ((), lambda s: s.append(input()),
-        "Input a string and push it.")
+    ((), lambda s: input(),
+        "The input %ret %res is pushed.")
 ])
 
 # ; : INPUT INT
 define(";", [
-    ((), lambda s: s.append(int(input())),
-        "Input an integer and push it.")
+    ((), lambda s: int(input()),
+        "The input int %res is pushed.")
 ])
 
 # `d : DUMP : print the entire stack as a list
 define("`d", [
     ((), lambda s: print(s),
-        "Print the entire contents of the stack.")
+        "The contents of the stack is printed.")
 ])

@@ -1,4 +1,5 @@
 import copy
+import string
 
 import functions
 from parser.token import Token
@@ -24,6 +25,7 @@ def execute(symbol: str, stack: list) -> str:
     if allow_arrays and len(args) > 0 and functions.is_list_of(args[0], arg_types[0]):
         # Apply the action to each item in the list
         ret = list(map(lambda x: action(x, *args[1:], stack), args[0]))
+        desc = desc.replace("%a", "N").replace("%ta", "value").replace(".", ",") + f" where N is each element in %a."
     # Otherwise scalar
     else:
         ret = action(*args, stack)
@@ -35,6 +37,14 @@ def execute(symbol: str, stack: list) -> str:
             stack.extend(ret)
         else:
             stack.append(ret)
+
+    for i, arg in enumerate(args):
+        a = string.ascii_lowercase[i]
+        desc = desc.replace(f"%t{a}", type(arg).__name__)
+        desc = desc.replace(f"%{a}", repr(arg))
+
+    desc = desc.replace(f"%ret", type(ret).__name__)
+    desc = desc.replace(f"%res", repr(ret))
 
     return desc
 
