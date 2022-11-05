@@ -143,3 +143,10 @@ class Process(Matcher):
         processed = self.action(match.value)
 
         return Result(processed), rest
+
+
+class EOF(Matcher):
+    def __call__(self, source):
+        if len(source) == 0:
+            return Empty, source
+        return Fail, source
