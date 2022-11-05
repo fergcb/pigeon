@@ -1,20 +1,28 @@
 # Pigeon
 Pigeon is a stack-based esoteric programming language with support for array programming.
 
+[**View the Pigeon instruction set**](./DOCS.md)
+
 ## Try it
 The following command will execute the "fizzbuzz" Pigeon source file in the examples.
 ```shell
 python pigeon.py run examples/fizzbuzz.pg
 ```
+Or, you can pass in a string of code to run as a command-line argument. Here is an example that computes a nth fibonacci number:
+```shell
+python pigeon.py exec "01;R2{+"
+```
 You can add the `-e` flag to explain the code as it is executed:
 ```shell
-python pigeon.py run -e examples/fizzbuzz.pg
+python pigeon.py run -e examples/fizzbuzz.pg # OR
+python pigeon.py exec -e "01;R2{+"
 ```
 
-## Example
+## Examples
+### Fizzbuzz
 The following snippet is a "FizzBuzz" program in Pigeon.
 ```
-"","Fizz","Buzz","FizzBuzz";^1+::r3%fc5%f2*+ic|"\n"j.
+"","Fizz","Buzz","FizzBuzz";^1+::r3%fc5%f2*+ic|"\n"j
 ```
 The program makes use of array programming techniques to print the integers from 1 to a number entered by the user,
 but replacing numbers divisible by 3 with "Fizz", numbers divisible by 5 with "Buzz", and numbers divisible by both
@@ -40,5 +48,19 @@ i                               Get the fizzbuzz string according to each number
 c                               Swap elements to put a copy of the range on top
 |                               Swap empty strings for the corresponding integer in the range
 "\n"j                           Join on a newline
-.                               Output the result
+                                The top element is implicitly printed
+```
+
+### Fibonacci
+The Pigeon program `01;R2{+` inputs a number `n` from the user, and computes the `n`th number in the Fibonacci sequence.
+
+The program can be broken down as follows. Note that the nested blocks are closed implicitly at the end of the program:
+```
+01      The numbers 0 and 1 are pushed to the stack
+;R      The nested code is executed a number of times chosen by the user
+  2{    Two items are copied from the stack into a new stack
+    +   The two items on the new stack are added together
+  }     The sum left on the new stack is pushed to the original stack
+}       (the repeat (R) block is closed)
+        The top element is implicitly printed
 ```
