@@ -14,6 +14,15 @@ run_parser = subparsers.add_parser("run", help="Run a Pigeon source file.")
 run_parser.add_argument("file", type=str, help="The Pigeon source file to run.")
 run_parser.add_argument("-e", dest="explain", action='store_true', help="Explain the code as it is executed.")
 
+exec_parser = subparsers.add_parser("exec", help="Execute a string of Pigeon code.")
+exec_parser.add_argument("code", type=str, help="The Pigeon code to run.")
+exec_parser.add_argument("-e", dest="explain", action='store_true', help="Explain the code as it is executed.")
+
+
+def run_code(code: str, explain: bool):
+    tokens = parse(code)
+    interpret(tokens, explain)
+
 
 def run_file(path: str, explain: bool):
     """
@@ -27,8 +36,7 @@ def run_file(path: str, explain: bool):
     else:
         with f:
             code = f.read()
-            tokens = parse(code)
-            interpret(tokens, explain)
+            run_code(code, explain)
 
 
 def main():
@@ -36,6 +44,8 @@ def main():
     match args.subcommand:
         case "run":
             run_file(args.file, args.explain)
+        case "exec":
+            run_code(args.code, args.explain)
 
 
 if __name__ == "__main__":
