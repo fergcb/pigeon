@@ -1,5 +1,6 @@
 import argparse
 
+from docs import generate_docs
 from parser import parse
 from interpreter import interpret
 
@@ -18,6 +19,9 @@ exec_parser = subparsers.add_parser("exec", help="Execute a string of Pigeon cod
 exec_parser.add_argument("code", type=str, help="The Pigeon code to run.")
 exec_parser.add_argument("-e", dest="explain", action='store_true', help="Explain the code as it is executed.")
 
+docs_parser = subparsers.add_parser("docs", help="Generate documentation.")
+docs_parser.add_argument("-o", dest="output", help="Emit docs as a markdown file.")
+
 
 def run_code(code: str, explain: bool):
     tokens = parse(code)
@@ -29,7 +33,7 @@ def run_file(path: str, explain: bool):
     Open a file and interpret the contents as Pigeon source code
     """
     try:
-        f = open(path, "r")
+        f = open(path, "r", encoding="UTF-8")
     except IOError:
         print(f"Failed to open file '{path}'.")
         return
@@ -46,6 +50,8 @@ def main():
             run_file(args.file, args.explain)
         case "exec":
             run_code(args.code, args.explain)
+        case "docs":
+            generate_docs(args.output)
 
 
 if __name__ == "__main__":

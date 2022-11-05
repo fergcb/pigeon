@@ -1,3 +1,4 @@
+import copy
 from dataclasses import dataclass
 from typing import Callable, Any, Optional
 
@@ -26,6 +27,10 @@ def define(symbol: str, sigs: list[Signature], allow_arrays: bool = True):
     if symbol in _functions:
         raise Exception(f"The symbol {symbol} is already bound to a function.")
     _functions[symbol] = Function(symbol, sigs, allow_arrays)
+
+
+def get_all() -> list[Function]:
+    return copy.deepcopy(list(_functions.values()))
 
 
 def get_func(symbol: str) -> Function:
