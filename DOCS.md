@@ -2,7 +2,7 @@
 The element-wise sums of %a and %b are pushed.
 
 ## (`+`) ADD (`int`, `int`)
-%a + %b = %res is pushed.
+%a+%b is pushed.
 
 ## (`+`) CONCAT (`str`, `any`)
 %a and %b are appended as strings.
@@ -14,7 +14,7 @@ The element-wise sums of %a and %b are pushed.
 The element-wise differences of %a and %b are pushed.
 
 ## (`-`) SUBTRACT (`int`, `int`)
-%a - %b = %res is pushed.
+%a-%b is pushed.
 
 ## (`-`) REMOVE (`str`, `str`)
 %b is removed from %a.
@@ -23,19 +23,22 @@ The element-wise differences of %a and %b are pushed.
 The element-wise products of %a and %b are pushed.
 
 ## (`*`) MULTIPLY (`int`, `int`)
-%a × %b = %res is pushed.
+%a×%b is pushed.
+
+## (`*`) REPEAT (`int`, `Block`)
+The block %b is executed %a times:
 
 ## (`/`) DIVIDE_ITEMS (`list`, `list`)
 The element-wise quotients of %a and %b are pushed.
 
 ## (`/`) DIVIDE (`int`, `int`)
-%a ÷ %b = %res is pushed.
+%a÷%b is pushed.
 
 ## (`%`) MODULO_ITEMS (`list`, `list`)
 The element-wise modulus of %a and %b are pushed.
 
 ## (`%`) MODULO (`int`, `int`)
-%a MOD %b = %res is pushed.
+%a%%b is pushed.
 
 ## (`&`) AND_ITEMS (`list`, `list`)
 The element-wise ANDs of %a and %b are pushed.
@@ -131,8 +134,11 @@ The any %a is printed to the console.
 The contents of the stack is printed.
 
 ## (`,`) INPUT
-The input %ret %res is pushed.
+An input value is pushed.
 
 ## (`;`) INPUT
-The input int %res is pushed.
+An integer input is pushed.
+
+## (`v`) SCOPE (`int`, `Block`)
+The block %b is executed on a fresh stack with %a arguments, and the results are pushed:
 

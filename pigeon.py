@@ -1,6 +1,5 @@
 import argparse
 
-from docs import generate_docs
 from parser import parse
 from interpreter import interpret
 
@@ -51,6 +50,7 @@ def main():
         case "exec":
             run_code(args.code, args.explain)
         case "docs":
+            from docs import generate_docs
             generate_docs(args.output)
 
 

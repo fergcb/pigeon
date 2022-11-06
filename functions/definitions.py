@@ -1,3 +1,5 @@
+import interpreter
+from block import Block
 from functions.define import define
 from stack import Stack
 
@@ -31,27 +33,27 @@ def modulo_items(al: list, bl: list) -> list:
 
 # MATHS
 
-@define("+", "%a + %b = %res is pushed.")
+@define("+", "%a+%b is pushed.")
 def add(a: int, b: int) -> int:
     return a + b
 
 
-@define("-", "%a - %b = %res is pushed.")
+@define("-", "%a-%b is pushed.")
 def subtract(a: int, b: int) -> int:
     return a - b
 
 
-@define("*", "%a × %b = %res is pushed.")
+@define("*", "%a×%b is pushed.")
 def multiply(a: int, b: int) -> int:
     return a * b
 
 
-@define("/", "%a ÷ %b = %res is pushed.")
+@define("/", "%a÷%b is pushed.")
 def divide(a: int, b: int) -> float:
     return a / b
 
 
-@define("%", "%a MOD %b = %res is pushed.")
+@define("%", "%a%%b is pushed.")
 def modulo(a: int, b: int) -> int:
     return a % b
 
@@ -242,11 +244,26 @@ def dump(s: Stack):
     print(s)
 
 
-@define(",", "The input %ret %res is pushed.")
+@define(",", "An input value is pushed.")
 def input_():
     return input()
 
 
-@define(";", "The input int %res is pushed.")
+@define(";", "An integer input is pushed.")
 def input_():
     return int(input())
+
+
+# BLOCK FUNCTIONS
+
+@define("*", "The block %b is executed %a times:")
+def repeat(a: int, b: Block, execute: exec):
+    for i in range(a):
+        execute(b.code)
+
+
+@define("v", "The block %b is executed on a fresh stack with %a arguments, and the results are pushed:")
+def scope(a: int, b: Block, execute: exec, s: Stack):
+    args = s.top(a)
+    res = execute(b.code, Stack(args))
+    return tuple(res)

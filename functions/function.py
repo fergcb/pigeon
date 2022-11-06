@@ -18,32 +18,45 @@ class Function:
     action: Callable
     can_vectorize: bool
     takes_stack: bool
+    takes_executor: bool
     desc: str
 
-    def __init__(self, name: str, symbol: str, params: tuple[type], action: Callable, can_vectorize: bool, takes_stack: bool, desc: str):
+    def __init__(self, name: str, symbol: str, params: tuple[type], action: Callable,
+                 can_vectorize: bool, takes_stack: bool, takes_executor: bool, desc: str):
         self.name = name
         self.symbol = symbol
         self.params = params
         self.action = action
         self.can_vectorize = can_vectorize
         self.takes_stack = takes_stack
+        self.takes_executor = takes_executor
         self.desc = desc
 
-    def call(self, stack: Stack) -> tuple[list, Any, bool]:
+    def prime(self, stack: Stack, executor: Callable):
         args = stack.pop_n(len(self.params))
+
+        if self.takes_executor:
+            args.append(executor)
 
         if self.takes_stack:
             args.append(stack)
 
-        # Try a vector operation
-        if self.can_vectorize and len(args) > 0 and _is_list_of(args[0], self.params[0]):
-            # Apply the action to each item in the list
-            return args, list(map(lambda x: self.action(x, *args[1:]), args[0])), True
-        # Otherwise scalar
-        else:
-            return args, self.action(*args), False
+        # Check if we can vectorize this operation
+        vectorized = self.can_vectorize and len(args) > 0 and _is_list_of(args[0], self.params[0])
 
-    def describe(self, args: Any, res: Any, vectorized: bool = False) -> str:
+        desc = self.describe(args, vectorized)
+
+        return args, vectorized, desc
+
+    def call(self, args: list, vectorized: bool) -> Any:
+        if vectorized:
+            # Apply the action to each item in the list
+            return list(map(lambda x: self.action(x, *args[1:]), args[0]))
+        else:
+            # Apply the regular, scalar function
+            return self.action(*args)
+
+    def describe(self, args: Any, vectorized: bool = False) -> str:
         desc = self.desc
 
         if vectorized:
@@ -54,9 +67,6 @@ class Function:
             a = string.ascii_lowercase[i]
             desc = desc.replace(f"%t{a}", type(arg).__name__)
             desc = desc.replace(f"%{a}", repr(arg))
-
-        desc = desc.replace(f"%ret", type(res).__name__)
-        desc = desc.replace(f"%res", repr(res))
 
         return desc
 

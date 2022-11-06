@@ -10,57 +10,59 @@ python pigeon.py run examples/fizzbuzz.pg
 ```
 Or, you can pass in a string of code to run as a command-line argument. Here is an example that computes a nth fibonacci number:
 ```shell
-python pigeon.py exec "01;R2{+"
+python pigeon.py exec "01;{2{+}v}*"
 ```
 You can add the `-e` flag to explain the code as it is executed:
 ```shell
 python pigeon.py run -e examples/fizzbuzz.pg # OR
-python pigeon.py exec -e "01;R2{+"
+python pigeon.py exec -e "01;{2{+}v}*"
 ```
 
 ## Examples
-### Fizzbuzz
-The following snippet is a "FizzBuzz" program in Pigeon.
+### Quine
 ```
-"","Fizz","Buzz","FizzBuzz";^1+::r3%fc5%f2*+ic|"\n"j
+0
 ```
-The program makes use of array programming techniques to print the integers from 1 to a number entered by the user,
-but replacing numbers divisible by 3 with "Fizz", numbers divisible by 5 with "Buzz", and numbers divisible by both
-3 and 5 with "FizzBuzz".
 
-The program can be broken down as follows:
-```
-"","Fizz","Buzz","FizzBuzz"     Push a list of 4 strings
-;^                              Input N and push a range [0, N)
-1+                              Add 1 to each in the range
-::                              Duplicate the range twice
-                                  (There are now 3 copies on the stack)
-r                               Rotate the stack (put 1 copy of the range to the bottom)
-3%                              Apply modulo 3 to each number in the range
-                                  Creates a mask where 0 = divisible by 3, 1 = not
-f                               Invert the mask (1 = divisible by 3, 0 = not)
-c                               Swap the mask for another copy of the range
-5%f                             Create a mask where 1 = divisible by 5, 0 = not
-2*                              Multiply the mask elements by 2 (2 = disible by 5)
-+                               Add the two masks
-                                  (3 = divisible by 5 and 3, 2 = divisible by 5, 1 = divisible by 3)
-i                               Get the fizzbuzz string according to each number in the list
-c                               Swap elements to put a copy of the range on top
-|                               Swap empty strings for the corresponding integer in the range
-"\n"j                           Join on a newline
-                                The top element is implicitly printed
-```
+In Pigeon, the value on top of the stack at the end of execution is implicitly printed.
+This means that the shortest quine in Pigeon is `0`.
+This program pushes the integer `0` to the stack, then prints it.
+In fact, any single decimal digit is a valid 1-byte quine in Pigeon.
 
 ### Fibonacci
-The Pigeon program `01;R2{+` inputs a number `n` from the user, and computes the `n`th number in the Fibonacci sequence.
-
-The program can be broken down as follows. Note that the nested blocks are closed implicitly at the end of the program:
 ```
-01      The numbers 0 and 1 are pushed to the stack
-;R      The nested code is executed a number of times chosen by the user
-  2{    Two items are copied from the stack into a new stack
-    +   The two items on the new stack are added together
-  }     The sum left on the new stack is pushed to the original stack
-}       (the repeat (R) block is closed)
-        The top element is implicitly printed
+01;{2{+}v}*
+```
+This program inputs a number `n` from the user, and computes the `n`th number in the Fibonacci sequence.
+
+The program can be broken down as follows.
+```
+01;{2{+}v}*     Input an integer n and print the nth Fibonacci number
+
+01              The numbers 0 and 1 are pushed to the stack
+  ;{     }*     The nested code is executed a number of times input by the user
+    2{ }v         A new stack is created with 2 values from the top of the parent stack
+                  and the nested code is executed on the new stack
+      +             The 2 values are added together
+                Implicitly print the result
+```
+
+### Factorial
+```
+;1+^u:1-{*}*
+```
+
+This program inputs an integer `n`, and outputs the factorial of `n`.
+
+The program can be broken down as follows:
+
+```
+;1+^u:1-{*}*    Input an integer and print its factorial
+
+;1+             Input a number and increment it
+   ^u           Produce a range from 0 to that number and unwrap it
+     :1-        Duplicate the top value from the range and decrement it
+        { }*    Execute the nested code that many times
+         *        Multiply two numbers at the top of the stack
+                Implicitly print the result
 ```
