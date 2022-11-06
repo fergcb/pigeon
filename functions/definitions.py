@@ -1,0 +1,252 @@
+from functions.define import define
+from stack import Stack
+
+
+# ELEMENT_WISE MATHS
+
+@define("+", "The element-wise sums of %a and %b are pushed.")
+def sum_items(al: list, bl: list):
+    return [a + b for a, b in zip(al, bl)]
+
+
+@define("-", "The element-wise differences of %a and %b are pushed.")
+def subtract_items(al: list, bl: list) -> list:
+    return [a - b for a, b in zip(al, bl)]
+
+
+@define("*", "The element-wise products of %a and %b are pushed.")
+def multiply_items(al: list, bl: list) -> list:
+    return [a * b for a, b in zip(al, bl)]
+
+
+@define("/", "The element-wise quotients of %a and %b are pushed.")
+def divide_items(al: list, bl: list) -> list:
+    return [a / b for a, b in zip(al, bl)]
+
+
+@define("%", "The element-wise modulus of %a and %b are pushed.")
+def modulo_items(al: list, bl: list) -> list:
+    return [a / b for a, b in zip(al, bl)]
+
+
+# MATHS
+
+@define("+", "%a + %b = %res is pushed.")
+def add(a: int, b: int) -> int:
+    return a + b
+
+
+@define("-", "%a - %b = %res is pushed.")
+def subtract(a: int, b: int) -> int:
+    return a - b
+
+
+@define("*", "%a × %b = %res is pushed.")
+def multiply(a: int, b: int) -> int:
+    return a * b
+
+
+@define("/", "%a ÷ %b = %res is pushed.")
+def divide(a: int, b: int) -> float:
+    return a / b
+
+
+@define("%", "%a MOD %b = %res is pushed.")
+def modulo(a: int, b: int) -> int:
+    return a % b
+
+
+# ELEMENT-WISE LOGIC
+
+@define("&", "The element-wise ANDs of %a and %b are pushed.")
+def and_items(al: list, bl: list) -> list:
+    return [a and b for a, b in zip(al, bl)]
+
+
+@define("|", "The element-wise ORs of %a and %b are pushed.")
+def or_items(al: list, bl: list) -> list:
+    return [a or b for a, b in zip(al, bl)]
+
+
+# LOGIC
+
+@define("&", "The short-circuiting AND of %a and %b is pushed.")
+def and_(a: any, b: any) -> any:
+    return a and b
+
+
+@define("|", "The short-circuiting OR of %a and %b is pushed.")
+def or_(a: any, b: any) -> any:
+    return a or b
+
+
+@define("t", "1 is pushed if the %ta %a is truthy, else 0 is pushed.")
+def truthy(a: any) -> int:
+    return int(not not a)
+
+
+@define("f", "1 is pushed if the %ta %a is falsy, else 0 is pushed.")
+def falsy(a: any) -> int:
+    return int(not a)
+
+
+# STRING FUNCTIONS
+
+@define("+", "%a and %b are appended as strings.")
+def concat(a: str, b: any) -> str:
+    return a + str(b)
+
+
+@define("+", "%a and %b are appended as strings.")
+def concat(a: any, b: str) -> str:
+    return str(a) + b
+
+
+@define("-", "%b is removed from %a.")
+def remove(a: str, b: str) -> str:
+    return a.replace(b, "")
+
+
+@define("j", "The elements of %a are joined on %b.")
+def join(al: list, b: str) -> str:
+    return b.join(map(str, al))
+
+
+@define("o", "%a is decoded into ascii code point(s).")
+def ordinal(a: str) -> int | list[int]:
+    return ord(a) if len(a) == 1 else [ord(c) for c in a]
+
+
+# TYPE CASTING
+
+@define("`l", "%a is cast to a list.")
+def to_list(a: str) -> list:
+    return list(a)
+
+
+@define("`s", "%a is cast to a string.")
+def to_string(a: any) -> str:
+    return str(a)
+
+
+@define("`n", "%a is cast to an integer.")
+def to_int(a: str) -> int:
+    return int(a)
+
+
+@define("`n", "%a is cast to an integer.")
+def to_int(a: float) -> int:
+    return int(a)
+
+
+@define("`f", "%a is cast to a float.")
+def to_float(a: str) -> float:
+    return float(a)
+
+
+@define("`f", "%a is cast to a float.")
+def to_float(a: int) -> float:
+    return float(a)
+
+
+# LIST FUNCTIONS
+
+@define("^", "A list of integers from 0 to %a is pushed.")
+def range_(a: int) -> list:
+    return list(range(a))
+
+
+@define("u", "Each item of %a is pushed.")
+def unwrap(a: list) -> tuple:
+    return tuple(a)
+
+
+@define("e", "A list of %a items popped from the stack is pushed.")
+def enlist(a: int, s: Stack) -> list:
+    return list(reversed([s.pop() for _ in range(a)]))
+
+
+@define("i", "The %bth item of %a is pushed.")
+def index(al: list, b: int) -> any:
+    return al[b]
+
+
+@define("i", "A list of elements from %a corresponding to indexes in %b is pushed.")
+def index(al: list, bl: list) -> list:
+    return [al[b] for b in bl]
+
+
+@define("p", "%a is split into %b-item chunks.")
+def partition(al: list, b: int) -> list:
+    return [al[i:i + b] for i in range(0, len(al), b)]
+
+
+@define("U", "The union of %a and %b is pushed.")
+def union(al: list, bl: list) -> list:
+    return [a for a in al if a in bl]
+
+
+@define("N", "The difference of %a and %b is pushed.")
+def union(al: list, bl: list) -> list:
+    return [a for a in al if a not in bl]
+
+
+@define("N", "All instances of %b are removed from %a.")
+def difference(al: list, b: any) -> list:
+    return [a for a in al if a != b]
+
+
+# CONSTANTS
+
+@define("b", "The list [0, 1] is pushed.")
+def bits() -> list:
+    return [0, 1]
+
+
+# STACK MANIPULATION
+
+@define(":", "A copy of the %ta %a is pushed.", vectorize=False)
+def duplicate(a: any) -> tuple:
+    return a, a
+
+
+@define("`:", "A copy each of the %ta %a and the %tb %b are pushed.", vectorize=False)
+def dup_two(a: any, b: any) -> tuple:
+    return a, b, a, b
+
+
+@define("c", "The %ta %a and the %tb %b are swapped.", vectorize=False)
+def cycle(a: any, b: any) -> tuple:
+    return b, a
+
+
+@define("r", "The %ta %a is moved to the bottom of the stack.", vectorize=False)
+def rotate(a: any, s: Stack):
+    s.insert(0, a)
+
+
+@define("#", "The %ta %a is discarded.")
+def void(_: any):
+    pass
+
+
+# INPUT / OUTPUT
+
+@define(".", "The %ta %a is printed to the console.", vectorize=False)
+def print_(a: any):
+    print(a)
+
+
+@define("`d", "The contents of the stack is printed.")
+def dump(s: Stack):
+    print(s)
+
+
+@define(",", "The input %ret %res is pushed.")
+def input_():
+    return input()
+
+
+@define(";", "The input int %res is pushed.")
+def input_():
+    return int(input())

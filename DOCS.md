@@ -1,150 +1,138 @@
+## (`+`) SUM_ITEMS (`list`, `list`)
+The element-wise sums of %a and %b are pushed.
 
-## `+`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`, `list`**: The element-wise sum of %a and %b is pushed.
-- **`int`, `int`**: %a + %b = %res is pushed.
-- **`str`, `any`**: %a and %b are appended as strings.
-- **`any`, `str`**: %a and %b are appended as strings.
+## (`+`) ADD (`int`, `int`)
+%a + %b = %res is pushed.
 
-## `*`
-**Vectorizable?** Yes
-### Signatures:
-- **`int`, `int`**: %a × %b = %res is pushed.
+## (`+`) CONCAT (`str`, `any`)
+%a and %b are appended as strings.
 
-## `-`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`, `list`**: The difference of %a and %b is pushed.
-- **`list`, `any`**: %b is removed from %a.
-- **`str`, `str`**: %b is removed from %a.
-- **`int`, `int`**: %a - %b = %res is pushed.
+## (`+`) CONCAT (`any`, `str`)
+%a and %b are appended as strings.
 
-## `/`
-**Vectorizable?** Yes
-### Signatures:
-- **`int`, `int`**: %a ÷ %b = %res is pushed.
+## (`-`) SUBTRACT_ITEMS (`list`, `list`)
+The element-wise differences of %a and %b are pushed.
 
-## `%`
-**Vectorizable?** Yes
-### Signatures:
-- **`int`, `int`**: %a MOD %b = %res is pushed.
+## (`-`) SUBTRACT (`int`, `int`)
+%a - %b = %res is pushed.
 
-## `&`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`, `list`**: The element-wise AND of %a and %b is pushed.
-- **`any`, `any`**: The short-circuiting AND of %a and %b is pushed.
+## (`-`) REMOVE (`str`, `str`)
+%b is removed from %a.
 
-## `|`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`, `list`**: The element-wise OR of %a and %b is pushed.
-- **`any`, `any`**: The short-circuiting OR of %a and %b is pushed.
+## (`*`) MULTIPLY_ITEMS (`list`, `list`)
+The element-wise products of %a and %b are pushed.
 
-## `j`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`, `str`**: The elements of %a are joined on %b.
+## (`*`) MULTIPLY (`int`, `int`)
+%a × %b = %res is pushed.
 
-## ``l`
-**Vectorizable?** Yes
-### Signatures:
-- **`str`**: %a is cast to a list.
+## (`/`) DIVIDE_ITEMS (`list`, `list`)
+The element-wise quotients of %a and %b are pushed.
 
-## ``s`
-**Vectorizable?** Yes
-### Signatures:
-- **`any`**: %a is cast to a string.
+## (`/`) DIVIDE (`int`, `int`)
+%a ÷ %b = %res is pushed.
 
-## ``n`
-**Vectorizable?** Yes
-### Signatures:
-- **`str`**: %a is cast to an integer.
+## (`%`) MODULO_ITEMS (`list`, `list`)
+The element-wise modulus of %a and %b are pushed.
 
-## ``f`
-**Vectorizable?** Yes
-### Signatures:
-- **`str`**: %a is cast to a float, and pushed.
-- **`int`**: %a is cast to a float, and pushed.
+## (`%`) MODULO (`int`, `int`)
+%a MOD %b = %res is pushed.
 
-## `^`
-**Vectorizable?** Yes
-### Signatures:
-- **`int`**: A list of integers from 0 to %a is pushed.
+## (`&`) AND_ITEMS (`list`, `list`)
+The element-wise ANDs of %a and %b are pushed.
 
-## `u`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`**: Each item of %a is pushed.
+## (`&`) AND (`any`, `any`)
+The short-circuiting AND of %a and %b is pushed.
 
-## `e`
-**Vectorizable?** Yes
-### Signatures:
-- **`int`**: A list of %a items popped from the stack is pushed.
+## (`|`) OR_ITEMS (`list`, `list`)
+The element-wise ORs of %a and %b are pushed.
 
-## `i`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`, `int`**: The %bth item of %a is pushed.
-- **`list`, `list`**: A list of elements from %a corresponding to indexes in %b is pushed.
+## (`|`) OR (`any`, `any`)
+The short-circuiting OR of %a and %b is pushed.
 
-## `p`
-**Vectorizable?** Yes
-### Signatures:
-- **`list`, `int`**: %a is split into %b-item chunks.
+## (`t`) TRUTHY (`any`)
+1 is pushed if the any %a is truthy, else 0 is pushed.
 
-## `b`
-**Vectorizable?** Yes
-### Signatures:
-- **None**: The list [0, 1] is pushed.
+## (`f`) FALSY (`any`)
+1 is pushed if the any %a is falsy, else 0 is pushed.
 
-## `t`
-**Vectorizable?** Yes
-### Signatures:
-- **`any`**: 1 is pushed if the value %a is truthy, else 0 is pushed.
+## (`j`) JOIN (`list`, `str`)
+The elements of %a are joined on %b.
 
-## `f`
-**Vectorizable?** Yes
-### Signatures:
-- **`any`**: 1 is pushed if the value %a is falsy, else 0 is pushed.
+## (`o`) ORDINAL (`str`)
+%a is decoded into ascii code point(s).
 
-## `:`
-**Vectorizable?** No
-### Signatures:
-- **`any`**: A copy of the value %a is pushed.
+## (``l`) TO_LIST (`str`)
+%a is cast to a list.
 
-## ``:`
-**Vectorizable?** No
-### Signatures:
-- **`any`, `any`**: A copy each of the value %a and the value %b are pushed.
+## (``s`) TO_STRING (`any`)
+%a is cast to a string.
 
-## `c`
-**Vectorizable?** No
-### Signatures:
-- **`any`, `any`**: The value %a and the value %b are swapped.
+## (``n`) TO_INT (`str`)
+%a is cast to an integer.
 
-## `r`
-**Vectorizable?** No
-### Signatures:
-- **`any`**: The value %a is moved to the bottom of the stack
+## (``n`) TO_INT (`float`)
+%a is cast to an integer.
 
-## `.`
-**Vectorizable?** No
-### Signatures:
-- **`any`**: The value %a is printed to the console.
+## (``f`) TO_FLOAT (`str`)
+%a is cast to a float.
 
-## `,`
-**Vectorizable?** Yes
-### Signatures:
-- **None**: The input %ret %res is pushed.
+## (``f`) TO_FLOAT (`int`)
+%a is cast to a float.
 
-## `;`
-**Vectorizable?** Yes
-### Signatures:
-- **None**: The input int %res is pushed.
+## (`^`) RANGE (`int`)
+A list of integers from 0 to %a is pushed.
 
-## ``d`
-**Vectorizable?** Yes
-### Signatures:
-- **None**: The contents of the stack is printed.
+## (`u`) UNWRAP (`list`)
+Each item of %a is pushed.
+
+## (`e`) ENLIST (`int`)
+A list of %a items popped from the stack is pushed.
+
+## (`i`) INDEX (`list`, `int`)
+The %bth item of %a is pushed.
+
+## (`i`) INDEX (`list`, `list`)
+A list of elements from %a corresponding to indexes in %b is pushed.
+
+## (`p`) PARTITION (`list`, `int`)
+%a is split into %b-item chunks.
+
+## (`U`) UNION (`list`, `list`)
+The union of %a and %b is pushed.
+
+## (`N`) UNION (`list`, `list`)
+The difference of %a and %b is pushed.
+
+## (`N`) DIFFERENCE (`list`, `any`)
+All instances of %b are removed from %a.
+
+## (`b`) BITS
+The list [0, 1] is pushed.
+
+## (`:`) DUPLICATE (`any`)
+A copy of the any %a is pushed.
+
+## (``:`) DUP_TWO (`any`, `any`)
+A copy each of the any %a and the any %b are pushed.
+
+## (`c`) CYCLE (`any`, `any`)
+The any %a and the any %b are swapped.
+
+## (`r`) ROTATE (`any`)
+The any %a is moved to the bottom of the stack.
+
+## (`#`) VOID (`any`)
+The any %a is discarded.
+
+## (`.`) PRINT (`any`)
+The any %a is printed to the console.
+
+## (``d`) DUMP
+The contents of the stack is printed.
+
+## (`,`) INPUT
+The input %ret %res is pushed.
+
+## (`;`) INPUT
+The input int %res is pushed.
+

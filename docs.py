@@ -5,20 +5,19 @@ import functions
 
 def generate_docs(output_path=None):
     docs_string = ""
-    for function in functions.get_all():
-        docs_string += f"\n## `{function.symbol}`\n"
-        docs_string += f"**Vectorizable?** {'Yes' if function.allow_arrays else 'No'}\n"
-        docs_string += f"### Signatures:\n"
-        for sig in function.sigs:
-            arg_types, action, desc = sig
-            for i, arg in enumerate(arg_types):
+    for group in functions.registry.all():
+        for func in group.functions:
+            docs_string += f"## (`{func.symbol}`) {func.name}"
+
+            if len(func.params) > 0:
+                param_strings = [f"`{arg.__name__}`" for arg in func.params]
+                docs_string += " (" + ", ".join(param_strings) + ")"
+
+            desc = func.desc
+            for i, param in enumerate(func.params):
                 a = string.ascii_lowercase[i]
-                desc = desc.replace(f"%t{a}", "value" if arg is ... else arg.__name__)
-            if len(arg_types) > 0:
-                types = ", ".join(["`any`" if arg is ... else f"`{arg.__name__}`" for arg in arg_types])
-            else:
-                types = "None"
-            docs_string += f"- **{types}**: {desc}\n"
+                desc = desc.replace(f"%t{a}", "value" if param is ... else param.__name__)
+            docs_string += "\n" + desc + "\n\n"
 
     if output_path is None:
         print(docs_string)

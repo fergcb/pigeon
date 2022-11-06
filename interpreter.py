@@ -1,60 +1,39 @@
 import copy
-import string
 
-import functions
+from functions import registry
 from parser.token import Token
+from stack import Stack
 
 
-def execute(symbol: str, stack: list) -> str:
+def execute(symbol: str, stack: Stack) -> str:
     """
     Find a function signature corresponding to the given symbol
     and stack state, and execute its action on the stack.
 
     Returns a string describing what the function did.
     """
-    match = functions.match_func(symbol, stack)
+    func = registry.find(symbol, stack)
 
-    if match is None:
-        raise Exception("No matching signature for call to '{}'.".format(symbol))
+    # Execute the stack operation
+    args, res, vectorized = func.call(stack)
 
-    func, allow_arrays = match
-    arg_types, action, desc = func
-
-    args = [] if arg_types == () else list(reversed([stack.pop() for x in arg_types]))
-    # Try an array operation
-    if allow_arrays and len(args) > 0 and functions.is_list_of(args[0], arg_types[0]):
-        # Apply the action to each item in the list
-        ret = list(map(lambda x: action(x, *args[1:], stack), args[0]))
-        desc = desc.replace("%a", "N").replace("%ta", "value").replace(".", ",") + f" where N is each element in %a."
-    # Otherwise scalar
-    else:
-        ret = action(*args, stack)
-
-    # If the action returned something, push it to the stack
-    if ret is not None:
+    # If the function returned something, push it to the stack
+    if res is not None:
         # A tuple means multiple items to push
-        if type(ret) is tuple:
-            stack.extend(ret)
+        if type(res) is tuple:
+            stack.extend(res)
         else:
-            stack.append(ret)
+            stack.append(res)
 
-    for i, arg in enumerate(args):
-        a = string.ascii_lowercase[i]
-        desc = desc.replace(f"%t{a}", type(arg).__name__)
-        desc = desc.replace(f"%{a}", repr(arg))
-
-    desc = desc.replace(f"%ret", type(ret).__name__)
-    desc = desc.replace(f"%res", repr(ret))
-
-    return desc
+    return func.describe(args, res, vectorized)
 
 
-def interpret(tokens: list[(Token, any)], explain: bool, stack=None, depth=0) -> list:
+def interpret(tokens: list[(Token, any)], explain: bool, stack: Stack = None, depth=0) -> list:
     """
     Execute a sequence of tokens on an empty stack,
     and return the resulting stack
     """
-    stack = [] if stack is None else stack
+    stack = Stack() if stack is None else stack
 
     indent = "    " * depth
 
@@ -71,7 +50,7 @@ def interpret(tokens: list[(Token, any)], explain: bool, stack=None, depth=0) ->
             case (Token.SCOPE, ts):
                 if len(stack) > 0 and type(stack[-1]) is int:
                     n = stack.pop()
-                    args = stack[-n:]
+                    args = Stack(stack[-n:])
                     if explain:
                         print(indent + f"({{) The program descends into a new scoped block with {n} arguments.")
                         print(indent + f"     => {args}\n")
