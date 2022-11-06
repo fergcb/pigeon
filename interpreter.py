@@ -14,10 +14,14 @@ def execute(symbol: str, stack: Stack, explain: bool, depth: int):
 
     func = registry.find(symbol, stack)
 
-    def executor(code, new_stack=None):
-        if explain:
-            print(indent + f" => {stack}\n")
+    def executor(code, new_stack=None, desc=None):
         new_stack = stack if new_stack is None else new_stack
+
+        if explain:
+            if desc is not None:
+                print(desc)
+            print(indent + f" => {new_stack}\n")
+
         return interpret(code, explain, new_stack, depth + 1)
 
     # Get all the prerequisites for the function call

@@ -1,1 +1,5 @@
+"Array-based solution:"#
 ;1+^u:1-{*}*
+
+"Iterative solution:"#
+"1;{:r*c1-}wc"#
