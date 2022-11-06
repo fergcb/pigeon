@@ -50,11 +50,11 @@ def interpret(tokens: list[(Token, any)], explain: bool, stack: Stack = None, de
             case (Token.SCOPE, ts):
                 if len(stack) > 0 and type(stack[-1]) is int:
                     n = stack.pop()
-                    args = Stack(stack[-n:])
+                    args = stack.top(n)
                     if explain:
                         print(indent + f"({{) The program descends into a new scoped block with {n} arguments.")
                         print(indent + f"     => {args}\n")
-                    ret = interpret(ts, explain, stack=copy.deepcopy(args), depth=depth+1)
+                    ret = interpret(ts, explain, stack=Stack(args), depth=depth+1)
                     stack.extend(ret)
                     if explain:
                         print(indent + "(}) The program ascends to the parent scope and the return values are pushed.")

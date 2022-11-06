@@ -1,6 +1,8 @@
 import string
 from typing import Callable, Any
 
+from stack import Stack
+
 
 def _is_list_of(v: Any, t: type) -> bool:
     """
@@ -27,10 +29,8 @@ class Function:
         self.takes_stack = takes_stack
         self.desc = desc
 
-    def call(self, stack: list) -> tuple[list, Any, bool]:
-        args = []
-        for _ in self.params:
-            args.insert(0, stack.pop())
+    def call(self, stack: Stack) -> tuple[list, Any, bool]:
+        args = stack.pop_n(len(self.params))
 
         if self.takes_stack:
             args.append(stack)
