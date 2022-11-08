@@ -1,5 +1,6 @@
 import string
-from typing import Callable, Any
+from types import UnionType
+from typing import Callable, Any, Union, get_origin, get_args
 
 from stack import Stack
 
@@ -8,7 +9,13 @@ def _is_list_of(v: Any, t: type) -> bool:
     """
     Check whether a value is a list of a given type
     """
-    return type(v) is list and (len(v) == 0 or t is any or all(type(x) is t for x in v))
+    return type(v) is list and (len(v) == 0 or t is any or all(_is_type(x, t) for x in v))
+
+
+def _is_type(v: Any, t: type) -> bool:
+    if get_origin(t) is UnionType:
+        return type(v) in get_args(t)
+    return type(v) is t
 
 
 class Function:
@@ -70,23 +77,29 @@ class Function:
 
         return desc
 
-    def match_params(self, stack: list) -> bool:
+    def match_params(self, stack: Stack) -> bool:
+        param_count = len(self.params)
         # If the function takes no args, always match
-        if self.params == ():
+        if param_count == 0:
             return True
 
         # If there aren't enough items on the stack, never match
-        if len(stack) < len(self.params):
+        if len(stack) < param_count:
             return False
 
-        top = stack[-len(self.params):]
+        top = stack.top(param_count)
 
         for i, param in enumerate(self.params):
             # Always match "any" type
             if param is any:
                 continue
             val = top[i]
-            # If there isn't a perfect match
+
+            # The type is an exact match
+            if _is_type(val, param):
+                continue
+
+            # No match? Try for vectorization
             if type(val) is not param:
                 # Allow the first argument to be a list of the given type, for array operations
                 if self.can_vectorize and i == 0 and _is_list_of(val, param):

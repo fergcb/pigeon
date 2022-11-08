@@ -3,6 +3,8 @@ from block import Block
 from functions.define import define
 from stack import Stack
 
+num = int | float
+
 
 # ELEMENT_WISE MATHS
 
@@ -34,27 +36,27 @@ def modulo_items(al: list, bl: list) -> list:
 # MATHS
 
 @define("+", "%a+%b is pushed.")
-def add(a: int, b: int) -> int:
+def add(a: num, b: num) -> num:
     return a + b
 
 
 @define("-", "%a-%b is pushed.")
-def subtract(a: int, b: int) -> int:
+def subtract(a: num, b: num) -> num:
     return a - b
 
 
 @define("*", "%a×%b is pushed.")
-def multiply(a: int, b: int) -> int:
+def multiply(a: num, b: num) -> num:
     return a * b
 
 
 @define("/", "%a÷%b is pushed.")
-def divide(a: int, b: int) -> float:
+def divide(a: num, b: num) -> num:
     return a / b
 
 
 @define("%", "%a%%b is pushed.")
-def modulo(a: int, b: int) -> int:
+def modulo(a: num, b: num) -> num:
     return a % b
 
 
@@ -137,7 +139,7 @@ def to_int(a: str) -> int:
 
 
 @define("`n", "%a is cast to an integer.")
-def to_int(a: float) -> int:
+def to_int(a: num) -> int:
     return int(a)
 
 
@@ -147,7 +149,7 @@ def to_float(a: str) -> float:
 
 
 @define("`f", "%a is cast to a float.")
-def to_float(a: int) -> float:
+def to_float(a: num) -> float:
     return float(a)
 
 
