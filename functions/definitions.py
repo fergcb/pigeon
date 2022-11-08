@@ -1,3 +1,5 @@
+import re
+
 from block import Block
 from functions.define import define
 from stack import Stack
@@ -145,6 +147,11 @@ def join(al: list, b: str) -> str:
 @define("o", "%a is decoded into ascii code point(s).")
 def ordinal(a: str) -> int | list[int]:
     return ord(a) if len(a) == 1 else [ord(c) for c in a]
+
+
+@define("F", "Split %a on whitespace.")
+def fields(a: str) -> list[str]:
+    return re.split(r"\s", a)
 
 
 # TYPE CASTING
