@@ -1,4 +1,3 @@
-import interpreter
 from block import Block
 from functions.define import define
 from stack import Stack
@@ -92,6 +91,33 @@ def truthy(a: any) -> int:
 @define("f", "1 is pushed if the %ta %a is falsy, else 0 is pushed.")
 def falsy(a: any) -> int:
     return int(not a)
+
+
+# COMPARISON
+
+@define("=", "1 is pushed if %a == %b, else 0 is pushed.")
+def less_than(a: any, b: any) -> int:
+    return int(a == b)
+
+
+@define("<", "1 is pushed if %a < %b, else 0 is pushed.")
+def less_than(a: num, b: num) -> int:
+    return int(a < b)
+
+
+@define(">", "1 is pushed if %a > %b, else 0 is pushed.")
+def less_than(a: num, b: num) -> int:
+    return int(a > b)
+
+
+@define("<", "1 is pushed if %a is shorter than %b, else 0 is pushed.")
+def less_than(a: list, b: list) -> int:
+    return int(a < b)
+
+
+@define(">", "1 is pushed if %a is longer than %b, else 0 is pushed.")
+def less_than(a: list, b: list) -> int:
+    return int(a > b)
 
 
 # STRING FUNCTIONS
