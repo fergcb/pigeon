@@ -7,94 +7,6 @@ from stack import Stack
 num = int | float
 
 
-# ELEMENT_WISE MATHS
-
-@define("+", "The element-wise sums of %a and %b are pushed.")
-def sum_items(al: list, bl: list):
-    return [a + b for a, b in zip(al, bl)]
-
-
-@define("-", "The element-wise differences of %a and %b are pushed.")
-def subtract_items(al: list, bl: list) -> list:
-    return [a - b for a, b in zip(al, bl)]
-
-
-@define("*", "The element-wise products of %a and %b are pushed.")
-def multiply_items(al: list, bl: list) -> list:
-    return [a * b for a, b in zip(al, bl)]
-
-
-@define("/", "The element-wise quotients of %a and %b are pushed.")
-def divide_items(al: list, bl: list) -> list:
-    return [a / b for a, b in zip(al, bl)]
-
-
-@define("%", "The element-wise modulus of %a and %b are pushed.")
-def modulo_items(al: list, bl: list) -> list:
-    return [a / b for a, b in zip(al, bl)]
-
-
-# MATHS
-
-@define("+", "%a+%b is pushed.")
-def add(a: num, b: num) -> num:
-    return a + b
-
-
-@define("-", "%a-%b is pushed.")
-def subtract(a: num, b: num) -> num:
-    return a - b
-
-
-@define("*", "%a×%b is pushed.")
-def multiply(a: num, b: num) -> num:
-    return a * b
-
-
-@define("/", "%a÷%b is pushed.")
-def divide(a: num, b: num) -> num:
-    return a / b
-
-
-@define("%", "%a%%b is pushed.")
-def modulo(a: num, b: num) -> num:
-    return a % b
-
-
-# ELEMENT-WISE LOGIC
-
-@define("&", "The element-wise ANDs of %a and %b are pushed.")
-def and_items(al: list, bl: list) -> list:
-    return [a and b for a, b in zip(al, bl)]
-
-
-@define("|", "The element-wise ORs of %a and %b are pushed.")
-def or_items(al: list, bl: list) -> list:
-    return [a or b for a, b in zip(al, bl)]
-
-
-# LOGIC
-
-@define("&", "The short-circuiting AND of %a and %b is pushed.")
-def and_(a: any, b: any) -> any:
-    return a and b
-
-
-@define("|", "The short-circuiting OR of %a and %b is pushed.")
-def or_(a: any, b: any) -> any:
-    return a or b
-
-
-@define("t", "1 is pushed if the %ta %a is truthy, else 0 is pushed.")
-def truthy(a: any) -> int:
-    return int(not not a)
-
-
-@define("f", "1 is pushed if the %ta %a is falsy, else 0 is pushed.")
-def falsy(a: any) -> int:
-    return int(not a)
-
-
 # COMPARISON
 
 @define("=", "1 is pushed if %a == %b, else 0 is pushed.")
@@ -149,9 +61,19 @@ def ordinal(a: str) -> int | list[int]:
     return ord(a) if len(a) == 1 else [ord(c) for c in a]
 
 
-@define("F", "Split %a on whitespace.")
+@define("F", "%a is split on whitespace.")
 def fields(a: str) -> list[str]:
     return re.split(r"\s", a)
+
+
+@define("p", "%a is padded on both sides with spaces to be %b chars long.")
+def pad(a: str, b: int) -> str:
+    return a.center(b, " ")
+
+
+@define("*", "%a is repeated %b times.")
+def pad(a: str, b: int) -> str:
+    return a * b
 
 
 # TYPE CASTING
@@ -233,11 +155,31 @@ def difference(al: list, b: any) -> list:
     return [a for a in al if a != b]
 
 
+@define("z", "%a is zipped with %b.")
+def zip_(a: list | str, b: list | str) -> list:
+    return [list(x) for x in zip(a, b)]
+
+
+@define("*", "%a is repeated %b times.")
+def pad(a: list, b: int) -> list:
+    return a * b
+
+
 # CONSTANTS
 
 @define("b", "The list [0, 1] is pushed.")
 def bits() -> list:
     return [0, 1]
+
+
+@define("E", "The empty string is pushed.")
+def empty_string() -> str:
+    return ""
+
+
+@define("N", "The newline character, \"\n\", is pushed.")
+def newline() -> str:
+    return "\n"
 
 
 # STACK MANIPULATION
@@ -333,3 +275,96 @@ def scan(al: list, b: Block, execute: exec):
 def while_(a: Block, execute: exec, s: Stack):
     while len(s) > 0 and s[-1]:
         execute(a.code)
+
+
+@define("m", "The block %b is mapped over the elements of %b:", vectorize=False)
+def map_(al: list, b: Block, execute: exec):
+    return [execute(b.code, Stack([a]))[-1] for a in al]
+
+
+# ELEMENT_WISE MATHS
+
+@define("+", "The element-wise sums of %a and %b are pushed.")
+def sum_items(al: list, bl: list):
+    return [a + b for a, b in zip(al, bl)]
+
+
+@define("-", "The element-wise differences of %a and %b are pushed.")
+def subtract_items(al: list, bl: list) -> list:
+    return [a - b for a, b in zip(al, bl)]
+
+
+@define("*", "The element-wise products of %a and %b are pushed.")
+def multiply_items(al: list, bl: list) -> list:
+    return [a * b for a, b in zip(al, bl)]
+
+
+@define("/", "The element-wise quotients of %a and %b are pushed.")
+def divide_items(al: list, bl: list) -> list:
+    return [a / b for a, b in zip(al, bl)]
+
+
+@define("%", "The element-wise modulus of %a and %b are pushed.")
+def modulo_items(al: list, bl: list) -> list:
+    return [a / b for a, b in zip(al, bl)]
+
+
+# MATHS
+
+@define("+", "%a+%b is pushed.")
+def add(a: num, b: num) -> num:
+    return a + b
+
+
+@define("-", "%a-%b is pushed.")
+def subtract(a: num, b: num) -> num:
+    return a - b
+
+
+@define("*", "%a×%b is pushed.")
+def multiply(a: num, b: num) -> num:
+    return a * b
+
+
+@define("/", "%a÷%b is pushed.")
+def divide(a: num, b: num) -> num:
+    return a / b
+
+
+@define("%", "%a%%b is pushed.")
+def modulo(a: num, b: num) -> num:
+    return a % b
+
+
+# ELEMENT-WISE LOGIC
+
+@define("&", "The element-wise ANDs of %a and %b are pushed.")
+def and_items(al: list, bl: list) -> list:
+    return [a and b for a, b in zip(al, bl)]
+
+
+@define("|", "The element-wise ORs of %a and %b are pushed.")
+def or_items(al: list, bl: list) -> list:
+    return [a or b for a, b in zip(al, bl)]
+
+
+# LOGIC
+
+@define("&", "The short-circuiting AND of %a and %b is pushed.")
+def and_(a: any, b: any) -> any:
+    return a and b
+
+
+@define("|", "The short-circuiting OR of %a and %b is pushed.")
+def or_(a: any, b: any) -> any:
+    return a or b
+
+
+@define("t", "1 is pushed if the %ta %a is truthy, else 0 is pushed.")
+def truthy(a: any) -> int:
+    return int(not not a)
+
+
+@define("f", "1 is pushed if the %ta %a is falsy, else 0 is pushed.")
+def falsy(a: any) -> int:
+    return int(not a)
