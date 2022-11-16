@@ -2,13 +2,14 @@ import argparse
 
 from parser import parse
 from interpreter import interpret
+from stack import Stack
 
 parser = argparse.ArgumentParser(
     prog="pigeon",
     description="An interpreter for the Pigeon programming language."
 )
 
-subparsers = parser.add_subparsers(help="subcommands", dest="subcommand", required=True)
+subparsers = parser.add_subparsers(help="subcommands", dest="subcommand", required=False)
 
 run_parser = subparsers.add_parser("run", help="Run a Pigeon source file.")
 run_parser.add_argument("file", type=str, help="The Pigeon source file to run.")
@@ -42,6 +43,18 @@ def run_file(path: str, explain: bool):
             run_code(code, explain)
 
 
+def run_repl():
+    stack = Stack()
+
+    while True:
+        code = input(" >>> ")
+        if code == ":exit":
+            return
+        tokens = parse(code)
+        interpret(tokens, False, stack)
+        print(stack)
+
+
 def main():
     args = parser.parse_args()
     match args.subcommand:
@@ -52,6 +65,8 @@ def main():
         case "docs":
             from docs import generate_docs
             generate_docs(args.output)
+        case _:
+            run_repl()
 
 
 if __name__ == "__main__":
