@@ -17,6 +17,11 @@ You can add the `-e` flag to explain the code as it is executed:
 python pigeon.py run -e examples/fizzbuzz.pg # OR
 python pigeon.py exec -e "01;{2{+}v}*"
 ```
+To provide an input file, use the `-i` flag. The specified file will be read and added to the stack before the program is executed.
+```shell
+python pigeon.py run aoc/01.pg -i aoc/01.txt # OR
+python pigeon.py exec "FE/{``n{+}/}m]" -i aoc/01.txt
+```
 
 ## Examples
 ### Quine
@@ -49,7 +54,7 @@ The program can be broken down as follows.
 
 ### Factorial
 ```
-;1+^u:1-{*}*
+;^1+{*}/
 ```
 
 This program inputs an integer `n`, and outputs the factorial of `n`.
@@ -57,12 +62,10 @@ This program inputs an integer `n`, and outputs the factorial of `n`.
 The program can be broken down as follows:
 
 ```
-;1+^u:1-{*}*    Input an integer and print its factorial
+;^1+{*}/    Input an integer and print its factorial
 
-;1+             Input a number and increment it
-   ^u           Produce a range from 0 to that number and unwrap it
-     :1-        Duplicate the top value from the range and decrement it
-        { }*    Execute the nested code that many times
-         *        Multiply two numbers at the top of the stack
-                Implicitly print the result
+;^          Input an integer and generate the range [0..n)
+  1+        Add one to each number in the range (=> [1..n])
+    {*}/    Apply a multiplicative reduction
+            Implicitly print the result
 ```
