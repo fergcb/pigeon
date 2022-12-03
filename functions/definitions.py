@@ -216,9 +216,14 @@ def index_of(al: list, b: any) -> any:
     return al.index(b)
 
 
-@define("p", "%a is split into %b-item chunks.")
-def partition(al: list, b: int) -> list:
-    return [al[i:i + b] for i in range(0, len(al), b)]
+@define("@", "The index of the substring %b in %a is pushed.")
+def index_of(al: str, b: any) -> any:
+    return al.index(str(b))
+
+
+@define("P", "%a is split into %b-item chunks.", vectorize=False)
+def partition(al: list | str, b: num) -> list:
+    return [al[i:i + int(b)] for i in range(0, len(al), int(b))]
 
 
 @define("/", "%a is split into chunks delimited by %b.")
@@ -240,13 +245,13 @@ def split(a: str, b: any) -> list:
     return a.split(str(b))
 
 
-@define("U", "The union of %a and %b is pushed.")
-def union(al: list, bl: list) -> list:
+@define("U", "The union of %a and %b is pushed.", vectorize=False)
+def union(al: list | str, bl: list | str) -> list:
     return [a for a in al if a in bl]
 
 
 @define("N", "The difference of %a and %b is pushed.")
-def union(al: list, bl: list) -> list:
+def union(al: list | str, bl: list | str) -> list:
     return [a for a in al if a not in bl]
 
 
