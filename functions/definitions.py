@@ -7,6 +7,57 @@ from stack import Stack
 num = int | float
 
 
+# BLOCK FUNCTIONS
+
+@define("*", "The block %b is executed %a times:")
+def repeat(a: int, b: Block, execute: exec):
+    for i in range(a):
+        execute(b.code, desc=f"Iteration {i+1}/{a}")
+
+
+@define("v", "The block %b is executed on a fresh stack with %a arguments, and the results are pushed:")
+def scope(a: int, b: Block, execute: exec, s: Stack):
+    args = s.top(a)
+    res = execute(b.code, Stack(args))
+    return tuple(res)
+
+
+@define("?", "The block %b is executed if %a is truthy:")
+def if_(a: any, b: Block, execute: exec):
+    if a:
+        execute(b.code)
+
+
+@define("/", "The block %b is executed on each element of %a and the previous result. The final result is pushed:")
+def reduce(al: list, b: Block, execute: exec):
+    last = al[0]
+    for a in al[1:]:
+        args = [last, a]
+        last = execute(b.code, Stack(args))[0]
+    return last
+
+
+@define("\\", "The block %b is executed one each element of %a and the previous result. The results list is pushed:")
+def scan(al: list, b: Block, execute: exec):
+    out = [al[0]]
+    for a in al[1:]:
+        args = [out[-1], a]
+        res = execute(b.code, Stack(args))
+        out.append(res[-1])
+    return tuple(out)
+
+
+@define("w", "The block %a is executed while the element on the top of the stack is truthy:")
+def while_(a: Block, execute: exec, s: Stack):
+    while len(s) > 0 and s[-1]:
+        execute(a.code)
+
+
+@define("m", "The block %b is mapped over the elements of %b:", vectorize=False)
+def map_(al: list, b: Block, execute: exec):
+    return [execute(b.code, Stack([a]))[-1] for a in al]
+
+
 # COMPARISON
 
 @define("=", "1 is pushed if %a == %b, else 0 is pushed.")
@@ -229,57 +280,6 @@ def input_():
 @define(";", "An integer input is pushed.")
 def input_():
     return int(input())
-
-
-# BLOCK FUNCTIONS
-
-@define("*", "The block %b is executed %a times:")
-def repeat(a: int, b: Block, execute: exec):
-    for i in range(a):
-        execute(b.code, desc=f"Iteration {i+1}/{a}")
-
-
-@define("v", "The block %b is executed on a fresh stack with %a arguments, and the results are pushed:")
-def scope(a: int, b: Block, execute: exec, s: Stack):
-    args = s.top(a)
-    res = execute(b.code, Stack(args))
-    return tuple(res)
-
-
-@define("?", "The block %b is executed if %a is truthy:")
-def if_(a: any, b: Block, execute: exec):
-    if a:
-        execute(b.code)
-
-
-@define("/", "The block %b is executed on each element of %a and the previous result. The final result is pushed:")
-def reduce(al: list, b: Block, execute: exec):
-    last = al[0]
-    for a in al[1:]:
-        args = [last, a]
-        last = execute(b.code, Stack(args))[0]
-    return last
-
-
-@define("\\", "The block %b is executed one each element of %a and the previous result. The results list is pushed:")
-def scan(al: list, b: Block, execute: exec):
-    out = [al[0]]
-    for a in al[1:]:
-        args = [out[-1], a]
-        res = execute(b.code, Stack(args))
-        out.append(res[-1])
-    return tuple(out)
-
-
-@define("w", "The block %a is executed while the element on the top of the stack is truthy:")
-def while_(a: Block, execute: exec, s: Stack):
-    while len(s) > 0 and s[-1]:
-        execute(a.code)
-
-
-@define("m", "The block %b is mapped over the elements of %b:", vectorize=False)
-def map_(al: list, b: Block, execute: exec):
-    return [execute(b.code, Stack([a]))[-1] for a in al]
 
 
 # ELEMENT_WISE MATHS
