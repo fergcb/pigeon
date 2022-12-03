@@ -3,3 +3,12 @@ n/"BX CY AZ AX BY CZ CX AY BZ"Fcs-@1+S
 
 "Replace the string with the following for part 2:"#
 "BX CX AX AY BY CY CZ AZ BZ"#
+
+"Explanation"#
+"n/               Split the input string on newlines"#
+"  "..."F         Push a list of pairs representing possible pairs"#
+"                   (1st item is worth 1 point, 2nd worth 1, etc.)"#
+"        cs-      Remove the space from the input pairs"#
+"           @1+   Find the 1-based index (i.e. the score) of each"#
+"                   input pair in the list of possible pairs"#
+"              S  Sum the scores"#
