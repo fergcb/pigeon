@@ -85,6 +85,16 @@ def less_than(a: list, b: list) -> int:
     return int(a > b)
 
 
+@define("[", "The smallest element of %a is pushed.")
+def min_(a: list) -> any:
+    return min(a)
+
+
+@define("]", "The greatest element of %b is pushed.")
+def min_(a: list) -> any:
+    return max(a)
+
+
 # STRING FUNCTIONS
 
 @define("+", "%a and %b are appended as strings.")
