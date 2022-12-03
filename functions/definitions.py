@@ -201,6 +201,25 @@ def partition(al: list, b: int) -> list:
     return [al[i:i + b] for i in range(0, len(al), b)]
 
 
+@define("/", "%a is split into chunks delimited by %b.")
+def split(a: list, b: any) -> list:
+    groups = []
+    group = []
+    for el in a:
+        if el == b:
+            groups.append(group)
+            group = []
+        else:
+            group.append(el)
+    groups.append(group)
+    return groups
+
+
+@define("/", "%a is split into chunks delimited by %b.")
+def split(a: str, b: any) -> list:
+    return a.split(str(b))
+
+
 @define("U", "The union of %a and %b is pushed.")
 def union(al: list, bl: list) -> list:
     return [a for a in al if a in bl]
