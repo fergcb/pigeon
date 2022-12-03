@@ -277,9 +277,14 @@ def empty_string() -> str:
     return ""
 
 
-@define("N", "The newline character, \"\n\", is pushed.")
+@define("n", "The newline character, \"\n\", is pushed.")
 def newline() -> str:
     return "\n"
+
+
+@define("s", "A space, \" \", is pushed.")
+def space() -> str:
+    return " "
 
 
 # STACK MANIPULATION
