@@ -307,6 +307,11 @@ def space() -> str:
     return " "
 
 
+@define("A", "The string of alphanumeric ascii characters is pushed.")
+def alphanumeric() -> str:
+    return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+
 # STACK MANIPULATION
 
 @define(":", "A copy of the %ta %a is pushed.", vectorize=False)
