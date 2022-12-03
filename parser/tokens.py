@@ -2,12 +2,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
-from iota import iota
-
 
 class TokenType(Enum):
-    LITERAL = iota(True)
-    FUNCTION = iota()
+    LITERAL = 1
+    FUNCTION = 2
 
 
 @dataclass
