@@ -2,7 +2,7 @@ import argparse
 
 from parser import parse
 from interpreter import interpret
-from stack import Stack
+from interpreter.stack import Stack
 
 parser = argparse.ArgumentParser(
     prog="pigeon",
@@ -76,7 +76,7 @@ def main():
         case "exec":
             run_code(args.code, args.explain, args.input)
         case "docs":
-            from docs import generate_docs
+            from cli.docs import generate_docs
             generate_docs(args.output)
         case _:
             run_repl()

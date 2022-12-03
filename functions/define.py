@@ -2,7 +2,7 @@ from typing import Callable, cast, get_type_hints
 
 from functions.function import Function
 from functions.function_registry import FunctionRegistry
-from stack import Stack
+from interpreter.stack import Stack
 
 
 def define(symbol: str, desc: str, *, name: str = None, vectorize: bool = True):

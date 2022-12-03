@@ -1,4 +1,4 @@
-from block import Block
+from interpreter.block import Block
 from parser.matcher import Repeat, Symbol, RegExp, Lazy, EOF
 from parser.action import SimpleAction, Entoken, Select
 

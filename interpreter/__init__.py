@@ -1,6 +1,6 @@
 from functions import registry
 from parser.tokens import Token, TokenType
-from stack import Stack
+from interpreter.stack import Stack
 
 
 def execute(symbol: str, stack: Stack, explain: bool, depth: int):

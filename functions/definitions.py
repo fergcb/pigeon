@@ -1,8 +1,8 @@
 import re
 
-from block import Block
+from interpreter.block import Block
 from functions.define import define
-from stack import Stack
+from interpreter.stack import Stack
 
 num = int | float
 

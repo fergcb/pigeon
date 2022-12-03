@@ -1,7 +1,7 @@
 from functions.function import Function
 from typing import Optional
 
-from stack import Stack
+from interpreter.stack import Stack
 
 
 class FunctionGroup:

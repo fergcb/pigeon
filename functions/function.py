@@ -1,8 +1,8 @@
 import string
 from types import UnionType
-from typing import Callable, Any, Union, get_origin, get_args
+from typing import Callable, Any, get_origin, get_args
 
-from stack import Stack
+from interpreter.stack import Stack
 
 
 def _is_list_of(v: Any, t: type) -> bool:
