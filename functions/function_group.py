@@ -1,6 +1,8 @@
 from functions.function import Function
 from typing import Optional
 
+from stack import Stack
+
 
 class FunctionGroup:
     """
@@ -13,7 +15,7 @@ class FunctionGroup:
         self.symbol = symbol
         self.functions = []
 
-    def find_func(self, stack: list) -> Optional[Function]:
+    def find_func(self, stack: Stack) -> Optional[Function]:
         for func in self.functions:
             if func.match_params(stack):
                 return func
