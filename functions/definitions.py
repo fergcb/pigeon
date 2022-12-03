@@ -206,6 +206,16 @@ def index(al: list, bl: list) -> list:
     return [al[b] for b in bl]
 
 
+@define("@", "The index of each item of %b in %a is pushed.")
+def index_of(al: list, bl: list) -> any:
+    return [al.index(b) for b in bl]
+
+
+@define("@", "The index of %b in %a is pushed.")
+def index_of(al: list, b: any) -> any:
+    return al.index(b)
+
+
 @define("p", "%a is split into %b-item chunks.")
 def partition(al: list, b: int) -> list:
     return [al[i:i + b] for i in range(0, len(al), b)]
