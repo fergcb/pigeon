@@ -265,6 +265,11 @@ def pad(a: list, b: int) -> list:
     return a * b
 
 
+@define("S", "Add all elements of %a.")
+def modulo(al: list) -> any:
+    return sum(al)
+
+
 # CONSTANTS
 
 @define("b", "The list [0, 1] is pushed.")
