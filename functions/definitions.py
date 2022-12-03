@@ -260,6 +260,16 @@ def difference(al: list, b: any) -> list:
     return [a for a in al if a != b]
 
 
+@define("l", "The length of %a is pushed.")
+def length(al: list | str) -> int:
+    return len(al)
+
+
+@define("d", "A list of the unique items in %a are pushed.")
+def deduplicate(al: list) -> list:
+    return list(set(al))
+
+
 @define("z", "%a is zipped with %b.")
 def zip_(a: list | str, b: list | str) -> list:
     return [list(x) for x in zip(a, b)]
