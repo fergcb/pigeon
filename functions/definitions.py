@@ -90,9 +90,19 @@ def min_(a: list) -> any:
     return min(a)
 
 
+@define("[", "The smallest %b elements of %b are pushed.")
+def min_(a: list, b: int) -> any:
+    return sorted(a)[:b]
+
+
 @define("]", "The greatest element of %b is pushed.")
 def min_(a: list) -> any:
     return max(a)
+
+
+@define("]", "The greatest %b elements of %b are pushed.")
+def min_(a: list, b: int) -> any:
+    return sorted(a)[-b:]
 
 
 # STRING FUNCTIONS
