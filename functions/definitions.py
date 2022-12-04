@@ -187,7 +187,7 @@ def range_(a: int) -> list:
     return list(range(a))
 
 
-@define("u", "Each item of %a is pushed.")
+@define("u", "Each item of %a is pushed.", vectorize=False)
 def unwrap(a: list) -> tuple:
     return tuple(a)
 
@@ -202,7 +202,7 @@ def index(al: list, b: int) -> any:
     return al[b]
 
 
-@define("i", "A list of elements from %a corresponding to indexes in %b is pushed.")
+@define("i", "A list of elements from %a corresponding to indexes in %b is pushed.", vectorize=False)
 def index(al: list, bl: list) -> list:
     return [al[b] for b in bl]
 
@@ -340,7 +340,7 @@ def rotate(a: any, s: Stack):
     s.insert(0, a)
 
 
-@define("#", "The %ta %a is discarded.")
+@define("#", "The %ta %a is discarded.", vectorize=False)
 def void(_: any):
     pass
 
