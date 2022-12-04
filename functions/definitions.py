@@ -192,6 +192,15 @@ def unwrap(a: list) -> tuple:
     return tuple(a)
 
 
+@define("_", "A list of each scalar nested in %a is pushed.", vectorize=False)
+def flatten(a: list) -> list:
+    def flatten_once(arr):
+        if isinstance(arr, list):
+            return sum(map(flatten_once, arr), [])
+        return [arr]
+    return flatten_once(a)
+
+
 @define("e", "A list of %a items popped from the stack is pushed.")
 def enlist(a: int, s: Stack) -> list:
     return list(reversed([s.pop() for _ in range(a)]))
