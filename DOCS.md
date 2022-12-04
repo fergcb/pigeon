@@ -4,7 +4,7 @@ The block `b` is executed `a` times:
 ## (`*`) PAD (`a: str`, `b: int`)
 `a` is repeated `b` times.
 
-## (`*`) PAD (`a: list`, `b: int`)
+## (`*`) REPEAT (`a: list`, `b: int`)
 `a` is repeated `b` times.
 
 ## (`*`) MULTIPLY_ITEMS (`a: list`, `b: list`)
@@ -41,7 +41,7 @@ The block `b` is executed one each element of `a` and the previous result. The r
 The block `a` is executed while the element on the top of the stack is truthy:
 
 ## (`m`) MAP (`a: list`, `b: Block`)
-The block `b` is mapped over the elements of `b`:
+The block `b` is mapped over the elements of `a`:
 
 ## (`=`) LESS_THAN (`a: any`, `b: any`)
 1 is pushed if `a` == `b`, else 0 is pushed.
@@ -103,9 +103,6 @@ The elements of `a` are joined on `b`.
 ## (`p`) PAD (`a: str`, `b: int`)
 `a` is padded on both sides with spaces to be `b` chars long.
 
-## (`p`) PARTITION (`a: list`, `b: int`)
-`a` is split into `b`-item chunks.
-
 ## (``l`) TO_LIST (`a: str`)
 `a` is cast to a list.
 
@@ -130,6 +127,9 @@ A list of integers from 0 to `a` is pushed.
 ## (`u`) UNWRAP (`a: list`)
 Each item of `a` is pushed.
 
+## (`_`) FLATTEN (`a: list`)
+A list of each scalar nested in `a` is pushed.
+
 ## (`e`) ENLIST (`a: int`)
 A list of `a` items popped from the stack is pushed.
 
@@ -139,27 +139,57 @@ The `b`th item of `a` is pushed.
 ## (`i`) INDEX (`a: list`, `b: list`)
 A list of elements from `a` corresponding to indexes in `b` is pushed.
 
-## (`U`) UNION (`a: list`, `b: list`)
+## (`@`) INDEX_OF (`a: list`, `b: list`)
+The index of each item of `b` in `a` is pushed.
+
+## (`@`) INDEX_OF (`a: list`, `b: any`)
+The index of `b` in `a` is pushed.
+
+## (`@`) INDEX_OF (`a: str`, `b: any`)
+The index of the substring `b` in `a` is pushed.
+
+## (`P`) PARTITION (`a: list/str`, `b: int/float`)
+`a` is split into `b`-item chunks.
+
+## (`U`) UNION (`a: list/str`, `b: list/str`)
 The union of `a` and `b` is pushed.
 
-## (`N`) UNION (`a: list`, `b: list`)
+## (`N`) UNION (`a: list/str`, `b: list/str`)
 The difference of `a` and `b` is pushed.
 
 ## (`N`) DIFFERENCE (`a: list`, `b: any`)
 All instances of `b` are removed from `a`.
 
-## (`N`) NEWLINE
-The newline character, "
-", is pushed.
+## (`l`) LENGTH (`a: list/str`)
+The length of `a` is pushed.
+
+## (`d`) DEDUPLICATE (`a: list`)
+A list of the unique items in `a` are pushed.
 
 ## (`z`) ZIP (`a: list/str`, `b: list/str`)
 `a` is zipped with `b`.
+
+## (`S`) SUM (`a: list`)
+The sum of all elements of `a` is pushed.
+
+## (`C`) COMBINATIONS (`a: list/str`, `b: int`)
+The length-`b` combinations of `a` are pushed.
 
 ## (`b`) BITS
 The list [0, 1] is pushed.
 
 ## (`E`) EMPTY_STRING
 The empty string is pushed.
+
+## (`n`) NEWLINE
+The newline character, "
+", is pushed.
+
+## (`s`) SPACE
+A space, " ", is pushed.
+
+## (`A`) ALPHANUMERIC
+The string of alphanumeric ascii characters is pushed.
 
 ## (`:`) DUPLICATE (`a: any`)
 A copy of the value `a` is pushed.
