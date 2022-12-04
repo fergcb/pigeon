@@ -286,12 +286,12 @@ def zip_(a: list | str, b: list | str) -> list:
 
 
 @define("*", "%a is repeated %b times.")
-def pad(a: list, b: int) -> list:
+def repeat(a: list, b: int) -> list:
     return a * b
 
 
-@define("S", "Add all elements of %a.")
-def modulo(al: list) -> any:
+@define("S", "The sum of all elements of %a is pushed.")
+def sum_(al: list) -> any:
     return sum(al)
 
 
