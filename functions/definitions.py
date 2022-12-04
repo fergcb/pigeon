@@ -53,7 +53,7 @@ def while_(a: Block, execute: exec, s: Stack):
         execute(a.code)
 
 
-@define("m", "The block %b is mapped over the elements of %b:", vectorize=False)
+@define("m", "The block %b is mapped over the elements of %a:", vectorize=False)
 def map_(al: list, b: Block, execute: exec):
     return [execute(b.code, Stack([a]))[-1] for a in al]
 
