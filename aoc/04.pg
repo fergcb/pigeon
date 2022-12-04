@@ -1,0 +1,14 @@
+"Part 1:"#
+{F{","/{"-"/`n}muz:uu<fcu>f&ruu>fcu<f&| }mS}#
+
+"Part 2:"#
+F{                      "Split input into lines and map over them"#
+ ","/                       "Split each line on comma"#
+ {"-"/`n}m_                 "Split each range on - and cast to int"#
+ 2C                         "Find all 2-item combinations of the range bounds"#
+ 1,2,1,3iu                  "Find the combinations (A C), (A D), (B C) & (B D)"#
+ u<fr u>fr u>fr u<fr        "Compute W=A>=C, X=A<=D, Y=B<=C, Z=B>=D"#
+ &r&|                       "Compute (W AND X) OR (Y AND Z)"#
+}m                      "Close map block"#
+S                       "Sum the results to count truths"#
+
