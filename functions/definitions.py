@@ -1,3 +1,4 @@
+import itertools
 import re
 
 from interpreter.block import Block
@@ -283,6 +284,11 @@ def pad(a: list, b: int) -> list:
 @define("S", "Add all elements of %a.")
 def modulo(al: list) -> any:
     return sum(al)
+
+
+@define("C", "The length-%b combinations of %a are pushed.")
+def combinations(al: list | str, b: int) -> list:
+    return list(map(list, itertools.combinations(al, b)))
 
 
 # CONSTANTS
