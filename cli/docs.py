@@ -17,7 +17,7 @@ def generate_docs(output_path=None):
     docs_string = ""
     for group in functions.registry.all():
         for func in group.functions:
-            docs_string += f"## (`{func.symbol}`) {func.name}"
+            docs_string += f"## (`` {func.symbol} ``) {func.name}"
 
             params = [stringify_type(param) for param in func.params]
             pairs = [(string.ascii_lowercase[i], param) for i, param in enumerate(params)]
