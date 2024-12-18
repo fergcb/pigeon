@@ -1,4 +1,5 @@
 import argparse
+from typing import Optional
 
 from parser import parse
 from interpreter import interpret
@@ -34,17 +35,22 @@ def read_file(path: str) -> str | None:
         return f.read()
 
 
-def run_code(code: str, explain: bool, input_path: str):
-    input_text = read_file(input_path)
-    if input_text is None:
-        print("Failed to open input file '%s'." % (input_path,))
-        return
+def run_code(code: str, explain: bool, input_path: Optional[str] = None):
+
+    if input_path is not None:
+        input_text = read_file(input_path)
+        if input_text is None:
+            print("Failed to open input file '%s'." % (input_path,))
+            return
+        initial_stack = Stack([input_text])
+    else:
+        initial_stack = Stack([])
 
     tokens = parse(code)
-    interpret(tokens, explain, Stack([input_text]))
+    interpret(tokens, explain, initial_stack)
 
 
-def run_file(path: str, explain: bool, input_path: str):
+def run_file(path: str, explain: bool, input_path: Optional[str] = None):
     """
     Open a file and interpret the contents as Pigeon source code
     """

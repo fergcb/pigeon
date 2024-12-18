@@ -6,6 +6,7 @@ from typing import Any
 class TokenType(Enum):
     LITERAL = 1
     FUNCTION = 2
+    COMMENT = 3
 
 
 @dataclass

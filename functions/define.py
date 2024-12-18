@@ -12,8 +12,11 @@ def define(symbol: str, desc: str, *, name: str = None, vectorize: bool = True):
         name = name if name is not None else action.__name__.upper().strip("_")
 
         hints = get_type_hints(action)
+
         if "return" in hints:
-            hints.pop("return")
+            return_type = hints.pop("return")
+        else:
+            return_type = None
 
         params = cast(tuple[type], tuple(hints.values()))
 
@@ -29,7 +32,9 @@ def define(symbol: str, desc: str, *, name: str = None, vectorize: bool = True):
         else:
             takes_executor = False
 
-        func = Function(name, symbol, params, action, vectorize, takes_stack, takes_executor, desc)
+        can_vectorize = vectorize and len(params) > 0
+
+        func = Function(name, symbol, params, return_type, action, can_vectorize, takes_stack, takes_executor, desc)
         FunctionRegistry.register(func)
 
         def no_call():

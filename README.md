@@ -1,7 +1,7 @@
 # Pigeon
 Pigeon is a stack-based esoteric programming language with support for array programming.
 
-[**View the Pigeon instruction set**](./DOCS.md)
+[**View the Pigeon instruction set**](DOCS.md)
 
 ## Try it
 The following command will execute the "fizzbuzz" Pigeon source file in the examples.

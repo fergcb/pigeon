@@ -1,0 +1,35 @@
+"Part 1"# {
+
+n/:::{4w}mrT{4w}mr4w{4^z{u>}mZ{j}m}mrR4w{4^z{u>}mZ{j}m}m4e_:{R}m2e_{"XMAS"=}mS
+
+}#{
+    n/                      "Split the input on newlines"#
+    :::                     "Make 4 copies              "#
+    {4w}m                   "Horiztonals                "#
+    rT{4w}m                 "Verticals                  "#
+    r4w{4^z{u>}mZ{j}m}m     "Down/Right Diagonals       "#
+    rR4w{4^z{u>}mZ{j}m}m    "Up/Right Diagonals         "#
+    4e_                     "Flatten into single list   "#
+    :{R}m2e_                "Get all reversed           "#
+    {"XMAS"=}mS             "Count how many equal XMAS  "#
+}#
+
+"Part 2"#
+
+n/{3w}m3w{Z{j:0,4,8ijr2,4,6ij2e:{R}m2e_"MAS"=S2=}m}m_S
+
+n/              "Split the input on newlines                "#
+{3w}m           "Get horizontal windows of each line        "#
+3w              "Get vertical windows                       "#
+{               "Map each vertical window:                  "#
+  Z             "  Zip horizontal windows for 3x3 2D windows"#
+  {             "  Map each 3x3:                            "#
+    j:          "    Join into single string                "#
+    0,4,8ijr    "    Get down-right diagonal                "#
+    2,4,6ij     "    Get down-left diagonal                 "#
+    2e:{R}m2e_  "    Get reverses of each diagonal          "#
+    "MAS"=S     "    Check for MAS                          "#
+    2=          "    Ensure two MASes                       "#
+  }m
+}m
+_S              "Count how many X-MASes                     "#

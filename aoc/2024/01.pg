@@ -1,0 +1,22 @@
+"Part 1"#
+"n/FT{`n)}muz{u-¦}mS"#
+
+"Explanation"#
+"n/                   Split the input string on newlines                 "#
+"  F                  Split each line on whitespace                      "#
+"   T                 Transpose the resulting 2D array for lists A and B "#
+"    {`n)}m           Sort each list ascending                           "#
+"          uz         Zip the lists                                      "#
+"            {u-¦}m   Find the absolute difference of each pair          "#
+"                  S  Sum the differences                                "#
+
+"Part 2"#
+n/FT{`n}muc:r{:r$*}1MS
+
+"Explanation"#
+"n/FT{`n}m               Get lists A and B                                 "#
+"         uc:r           Duplicate list A                                  "#
+"             {    }1M   Map over items of A with a copy of B on the stack "#
+"              :r$       Count occurrences of item from A in B             "#
+"                 *      Multiply item from A by count                     "#
+"                     S  Sum counts                                        "#

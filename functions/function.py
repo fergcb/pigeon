@@ -22,17 +22,19 @@ class Function:
     name: str
     symbol: str
     params: tuple[type]
+    return_type: type
     action: Callable
     can_vectorize: bool
     takes_stack: bool
     takes_executor: bool
     desc: str
 
-    def __init__(self, name: str, symbol: str, params: tuple[type], action: Callable,
+    def __init__(self, name: str, symbol: str, params: tuple[type], return_type: type, action: Callable,
                  can_vectorize: bool, takes_stack: bool, takes_executor: bool, desc: str):
         self.name = name
         self.symbol = symbol
         self.params = params
+        self.return_type = return_type
         self.action = action
         self.can_vectorize = can_vectorize
         self.takes_stack = takes_stack

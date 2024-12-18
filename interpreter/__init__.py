@@ -59,9 +59,11 @@ def interpret(tokens: list[(Token, any)], explain: bool, stack: Stack = None, de
                     print(indent + f"The value {repr(x)} is pushed to the stack.")
             case Token(TokenType.FUNCTION, f):
                 execute(f, stack, explain, depth)
+            case Token(TokenType.COMMENT, _):
+                pass
             case _:
                 raise Exception(f"Invalid token {token}")
-        if explain:
+        if explain and token.type is not TokenType.COMMENT:
             print(indent + f" => {stack}\n")
 
     if depth == 0 and len(stack) > 0:

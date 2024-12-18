@@ -41,8 +41,12 @@ def FunctionExpr():
     return RegExp(r"`?[^\s{}]") >> Entoken(TokenType.FUNCTION)
 
 
+def CommentExpr():
+    return Literal() + Symbol("#") >> Entoken(TokenType.COMMENT)
+
+
 def Expr():
-    return ArrayExpr() | LiteralExpr() | FunctionExpr()
+    return CommentExpr() | ArrayExpr() | LiteralExpr() | FunctionExpr()
 
 
 def Program():

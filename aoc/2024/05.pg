@@ -1,0 +1,51 @@
+"Part 1"#{
+    nn+/un/{","/`n}mcn/{"|"/`n}mc{`v{`vc@:01->S2=fru<|}m{&}/r:l2/`ni*}mS
+}#{
+nn+/u                   "Split the input on the empty line                  "#
+n/{","/`n}m             "Split updates on newlines and each update on commas"#
+c                       "Bring rules to top of stack                        "#
+n/{"|"/`n}m             "Split rules on newlines and each rule on pipe      "#
+c                       "Bring updates to top of stack                      "#
+{                       "Map over each update:                              "#
+    `v                  "   Borrow rules                                    "#
+    {                   "   For each rule:                                  "#
+        `vc@            "       Get indices of rule pages in the update     "#
+        :01->S2=f       "       Check if either page is not in the update   "#
+        ru<             "       Check that first page is before second      "#
+        |               "       Ensure one of the checks is true            "#
+    }m
+    {&}/                "   Ensure update follows all rules                 "#
+    r:l2/`ni            "   Get middle page from update                     "#
+    *                   "   Nullify updates that don't follow rules         "#
+}m
+S                       "Sum middle pages of compliant updates              "#
+}#
+
+"Part 2"#
+
+nn+/un/{","/`n}mcn/{"|"/`n}mc{2e:ruc{@:01->S2=fru<|}1M{&}/fru{2eR`vch01-*}(:l2/`nirr*}1MS
+
+{
+    nn+/u                   "Split the input on the empty line                  "#
+    n/{","/`n}m             "Split updates on newlines and each update on commas"#
+    c                       "Bring rules to top of stack                        "#
+    n/{"|"/`n}m             "Split rules on newlines and each rule on pipe      "#
+    c                       "Bring updates to top of stack                      "#
+    {                       "Map over each update with a copy of the rules:     "#
+        2e:ruc              "   Duplicate the update & rules                    "#
+        {                   "   For each rule:                                  "#
+            @               "       Get indices of rule pages in the update     "#
+            :01->S2=f       "       Check if either page is not in the update   "#
+            ru<             "       Check that first page is before second      "#
+            |               "       Ensure one of the checks is true            "#
+        }1M
+        {&}/f               "   Ensure update breaks at least one rule          "#
+        ru                  "   Recall the other copy of the update & rules     "#
+        {2eR`vch01-*}(      "   Sort update based on page rules                 "#
+        :l2/`ni             "   Get middle page from the sorted update          "#
+        rr                  "   Cycle the middle page & the mask to the top     "#
+        *                   "   Nullify updates that DO follow rules            "#
+    }1M
+    S                       "   Sum the selected middle pages                   "#
+}#
+

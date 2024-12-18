@@ -1,5 +1,6 @@
 import itertools
 import re
+from functools import cmp_to_key
 
 from interpreter.block import Block
 from functions.define import define
@@ -13,13 +14,13 @@ num = int | float
 @define("*", "The block %b is executed %a times:")
 def repeat(a: int, b: Block, execute: exec):
     for i in range(a):
-        execute(b.code, desc=f"Iteration {i+1}/{a}")
+        execute(b.code, desc=f"Iteration {i + 1}/{a}")
 
 
 @define("v", "The block %b is executed on a fresh stack with %a arguments, and the results are pushed:")
 def scope(a: int, b: Block, execute: exec, s: Stack):
     args = s.top(a)
-    res = execute(b.code, Stack(args))
+    res = execute(b.code, Stack(args, parent=s))
     return tuple(res)
 
 
@@ -30,20 +31,30 @@ def if_(a: any, b: Block, execute: exec):
 
 
 @define("/", "The block %b is executed on each element of %a and the previous result. The final result is pushed:")
-def reduce(al: list, b: Block, execute: exec):
+def reduce(al: list, b: Block, execute: exec, s: Stack):
     last = al[0]
     for a in al[1:]:
         args = [last, a]
-        last = execute(b.code, Stack(args))[0]
+        last = execute(b.code, Stack(args, parent=s))[0]
+    return last
+
+
+@define("/", "The block %b is executed on each element of %a and the previous result, starting with %c."
+             "The final result is pushed:")
+def reduce(al: list, b: Block, c: any, execute: exec, s: Stack):
+    last = c
+    for a in al:
+        args = [last, a]
+        last = execute(b.code, Stack(args, parent=s))[0]
     return last
 
 
 @define("\\", "The block %b is executed one each element of %a and the previous result. The results list is pushed:")
-def scan(al: list, b: Block, execute: exec):
+def scan(al: list, b: Block, execute: exec, s: Stack):
     out = [al[0]]
     for a in al[1:]:
         args = [out[-1], a]
-        res = execute(b.code, Stack(args))
+        res = execute(b.code, Stack(args, parent=s))
         out.append(res[-1])
     return tuple(out)
 
@@ -55,14 +66,26 @@ def while_(a: Block, execute: exec, s: Stack):
 
 
 @define("m", "The block %b is mapped over the elements of %a:", vectorize=False)
-def map_(al: list, b: Block, execute: exec):
-    return [execute(b.code, Stack([a]))[-1] for a in al]
+def map_(al: list, b: Block, execute: exec, s: Stack):
+    return [execute(b.code, Stack([a], parent=s))[-1] for a in al]
+
+
+@define("M", "The block %b is mapped over the elements of %a, with %c additional items from the stack in scope:",
+        vectorize=False)
+def map_with_args(al: list, b: Block, c: int, execute: exec, s: Stack):
+    args = s.pop_n(c)
+    return [execute(b.code, Stack([*args, a], parent=s))[-1] for a in al]
+
+
+@define("p", "The block %b is mapped over each consecutive pair of %a", vectorize=False)
+def pairwise_map(al: list, b: Block, execute: exec, s: Stack):
+    return [execute(b.code, Stack([a1, a2], parent=s))[-1] for a1, a2 in itertools.pairwise(al)]
 
 
 # COMPARISON
 
 @define("=", "1 is pushed if %a == %b, else 0 is pushed.")
-def less_than(a: any, b: any) -> int:
+def equals(a: any, b: any) -> int:
     return int(a == b)
 
 
@@ -128,6 +151,11 @@ def join(al: list, b: str) -> str:
     return b.join(map(str, al))
 
 
+@define("j", "The elements of %a are concatenated.")
+def join(al: list) -> str:
+    return "".join(map(str, al))
+
+
 @define("o", "%a is decoded into ascii code point(s).")
 def ordinal(a: str) -> int | list[int]:
     return ord(a) if len(a) == 1 else [ord(c) for c in a]
@@ -135,7 +163,7 @@ def ordinal(a: str) -> int | list[int]:
 
 @define("F", "%a is split on whitespace.")
 def fields(a: str) -> list[str]:
-    return re.split(r"\s", a)
+    return re.split(r"\s+", a)
 
 
 @define("p", "%a is padded on both sides with spaces to be %b chars long.")
@@ -146,6 +174,11 @@ def pad(a: str, b: int) -> str:
 @define("*", "%a is repeated %b times.")
 def pad(a: str, b: int) -> str:
     return a * b
+
+
+@define("`m", "A list of matches of the regex %b found in %a is pushed")
+def regex_matches(a: str, b: str) -> list:
+    return re.findall(b, a)
 
 
 # TYPE CASTING
@@ -198,6 +231,7 @@ def flatten(a: list) -> list:
         if isinstance(arr, list):
             return sum(map(flatten_once, arr), [])
         return [arr]
+
     return flatten_once(a)
 
 
@@ -211,14 +245,24 @@ def index(al: list, b: int) -> any:
     return al[b]
 
 
+@define("i", "The %bth character of %a is pushed.")
+def index(a: str, b: int) -> any:
+    return a[b]
+
+
 @define("i", "A list of elements from %a corresponding to indexes in %b is pushed.", vectorize=False)
 def index(al: list, bl: list) -> list:
     return [al[b] for b in bl]
 
 
+@define("i", "A list of characters from %a corresponding to indexes in %b is pushed.", vectorize=False)
+def index(a: str, bl: list) -> list:
+    return [a[b] for b in bl]
+
+
 @define("@", "The index of each item of %b in %a is pushed.")
 def index_of(al: list, bl: list) -> any:
-    return [al.index(b) for b in bl]
+    return [al.index(b) if b in al else -1 for b in bl]
 
 
 @define("@", "The index of %b in %a is pushed.")
@@ -255,22 +299,22 @@ def split(a: str, b: any) -> list:
     return a.split(str(b))
 
 
-@define("U", "The union of %a and %b is pushed.", vectorize=False)
-def union(al: list | str, bl: list | str) -> list:
+@define("N", "The intersection of %a and %b is pushed.", vectorize=False)
+def intersection(al: list | str, bl: list | str) -> list:
     return [a for a in al if a in bl]
 
 
-@define("N", "The difference of %a and %b is pushed.")
-def union(al: list | str, bl: list | str) -> list:
+@define("-", "The difference of %a and %b is pushed.")
+def difference(al: list | str, bl: list | str) -> list:
     return [a for a in al if a not in bl]
 
 
-@define("N", "All instances of %b are removed from %a.")
-def difference(al: list, b: any) -> list:
+@define("-", "All instances of %b are removed from %a.")
+def remove(al: list, b: any) -> list:
     return [a for a in al if a != b]
 
 
-@define("l", "The length of %a is pushed.")
+@define("l", "The length of %a is pushed.", vectorize=False)
 def length(al: list | str) -> int:
     return len(al)
 
@@ -280,12 +324,17 @@ def deduplicate(al: list) -> list:
     return list(set(al))
 
 
-@define("z", "%a is zipped with %b.")
+@define("z", "%a is zipped with %b.", vectorize=False)
 def zip_(a: list | str, b: list | str) -> list:
     return [list(x) for x in zip(a, b)]
 
 
-@define("*", "%a is repeated %b times.")
+@define("Z", "All items of %a are zipped together", vectorize=False)
+def zip_all(al: list) -> list:
+    return [list(x) for x in zip(*al)]
+
+
+@define("*", "%a is repeated %b times.", vectorize=False)
 def repeat(a: list, b: int) -> list:
     return a * b
 
@@ -298,6 +347,106 @@ def sum_(al: list) -> any:
 @define("C", "The length-%b combinations of %a are pushed.")
 def combinations(al: list | str, b: int) -> list:
     return list(map(list, itertools.combinations(al, b)))
+
+
+@define("T", "The transpose of the 2D list %a is pushed.", vectorize=False)
+def transpose(al: list) -> list:
+    if len(al) == 0:
+        return []
+    if type(al[0]) is list:
+        return [list(z) for z in zip(*al)]
+    if type(al[0]) is str:
+        return ["".join(z) for z in zip(*al)]
+    return al
+
+
+@define(")", "The list %a is sorted ascending and pushed.", vectorize=False)
+def transpose_ascending(al: list) -> list:
+    return sorted(al)
+
+
+@define("(", "The list %a is sorted descending and pushed.", vectorize=False)
+def transpose_descending(al: list) -> list:
+    return sorted(al, reverse=True)
+
+
+@define(")", "The list %a is sorted ascending by keys produced by %b and pushed.", vectorize=False)
+def transpose_ascending(al: list, b: Block, execute: exec, s: Stack) -> list:
+    def cmp(x, y):
+        return execute(b.code, Stack([x, y], parent=s))[-1]
+    return sorted(al, key=cmp_to_key(cmp))
+
+
+@define("(", "The list %a is sorted descending by keys produced by %b and pushed.", vectorize=False)
+def transpose_descending(al: list, b: Block, execute: exec, s: Stack) -> list:
+    def cmp(x, y):
+        return execute(b.code, Stack([x, y], parent=s))[-1]
+    return sorted(al, reverse=True, key=cmp_to_key(cmp))
+
+
+@define("g", "Group elements of %a by value", vectorize=False)
+def group_by_identity(al: list) -> list:
+    groups = {}
+    for a in al:
+        if a in groups:
+            groups[a].append(a)
+        else:
+            groups[a] = [a]
+    return list(groups.values())
+
+
+@define("g", "Group elements of %a by a key provided by %b", vectorize=False)
+def group_by(al: list, b: Block, execute: exec, s: Stack) -> list:
+    pairs = [(execute(b.code, Stack([a], parent=s))[-1], a) for a in al]
+    groups = {}
+    for k, v in pairs:
+        if k in groups:
+            groups[k].append(v)
+        else:
+            groups[k] = [v]
+    return list(groups.values())
+
+
+@define("$", "Count occurrences of %b in %a", vectorize=False)
+def count(al: list, b: any) -> int:
+    return al.count(b)
+
+
+@define("_", "The item of %a at index %b is removed", vectorize=False)
+def drop_index(al: list, b: int) -> list:
+    return al[:b] + al[b + 1:]
+
+
+@define("w", "A list of windows of size %b in list %a is pushed", vectorize=False)
+def windows(al: list | str, b: int) -> list:
+    return [al[i:i + b] for i in range(len(al) - b + 1)]
+
+
+@define(">", "The first %b elements of %a are dropped")
+def start(al: list | str, n: int) -> list:
+    return al[n:]
+
+
+@define("<", "The last %b elements of %a are dropped")
+def end(al: list | str, n: int) -> list:
+    return al[:n]
+
+
+@define("R", "The reverse of %a is pushed", vectorize=False)
+def end(al: list) -> list:
+    return list(reversed(al))
+
+
+@define("R", "The reverse of %a is pushed", vectorize=False)
+def end(al: str) -> str:
+    return "".join(reversed(al))
+
+
+@define("h", "1 is pushed if %a has member %b", vectorize=False)
+def has(al: list, b: any) -> int:
+    if type(b) in [str, int, float]:
+        return int(b in al)
+    return int(any(a == b for a in al))
 
 
 # CONSTANTS
@@ -354,6 +503,11 @@ def void(_: any):
     pass
 
 
+@define("`v", "The top element from the parent stack is pushed")
+def borrow(s: Stack):
+    return s.parent[-1]
+
+
 # INPUT / OUTPUT
 
 @define(".", "The %ta %a is printed to the console.", vectorize=False)
@@ -361,7 +515,6 @@ def print_(a: any):
     print(a)
 
 
-@define("`d", "The contents of the stack is printed.")
 def dump(s: Stack):
     print(s)
 
@@ -428,6 +581,20 @@ def divide(a: num, b: num) -> num:
 @define("%", "%a%%b is pushed.")
 def modulo(a: num, b: num) -> num:
     return a % b
+
+
+@define("¦", "The absolute value of %a is pushed")
+def magnitude(a: num) -> num:
+    return abs(a)
+
+
+@define("~", "The sign of %a is pushed")
+def sign(a: num) -> int:
+    if a > 0:
+        return 1
+    if a < 0:
+        return -1
+    return 0
 
 
 # ELEMENT-WISE LOGIC

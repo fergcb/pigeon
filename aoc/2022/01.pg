@@ -1,0 +1,22 @@
+"Part 1"#
+"FE/{`nS}m]"#
+
+"Explanation"#
+"F           Split the input string on whitespace    "#
+" E/         Partition the lines on the empty string "#
+"   {   }m   Map the nested block over the partitions"#
+"    `n        Cast each string to a number          "#
+"      S       Find the sum of this partition        "#
+"         ]  Find the maximum sum                    "#
+
+"Part 2"#
+FE/{`nS}m3]S
+
+"Explanation"#
+"F             Split the input string on whitespace    "#
+" E/           Partition the lines on the empty string "#
+"   {   }m     Map the nested block over the partitions"#
+"    `n          Cast each string to a number          "#
+"      S         Find the sum of this partition        "#
+"         3]   Find the three largest sums             "#
+"           S  Find their sum                          "#

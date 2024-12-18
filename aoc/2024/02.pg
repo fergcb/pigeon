@@ -1,0 +1,25 @@
+"Part 1"#
+"n/F{`n{-}p:{~}mgl1=c{¦:0>c4<&&}1/&}mS"#
+
+"Explanation"#
+n/F                                    Split the input on newlines and each line on whitespace
+   {                              }m   Map over each list:
+    `n{-}p:                              Get the difference between each adjacent pair
+           {~}mgl1=                      Ensure the differences all have the same sign
+                   c{¦:0>c4<&&}1/        Ensure all the differences are >0 and <4
+                                 &       Ensure both conditions are true
+                                    S  Count lists that matched both conditions
+
+"Part 2"#
+n/F{:l:^rc1ec*cz{u_`n{-}p:{~}mgl1=c{¦:0>c4<&&}1/&}m{|}0/}mS
+
+"Explanation"#
+"n/F                                Split input on newlines & each line on whitespace "#
+"   {                          }m   Map over each list:                               "#
+"    :l:^                              Generate indices 0 to list length              "#
+"        rc1ec*cz                      Zip indices with copies of the list            "#
+"                {      }m             Map over each pairing:                         "#
+"                 u_`                    Drop the list item at the given index        "#
+"                    ...                 Perform the checks as per part 1             "#
+"                         {|}0/        Ensure at least one permutation passes checks  "#
+"                                S  Count lists that matched the conditions           "#

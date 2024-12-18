@@ -1,0 +1,16 @@
+"Part 1"#
+{ "(?<=mul\()\d{1,3},\d{1,3}(?=\))"`m{","/`nu*}mS }#
+
+"Part 2"#
+
+"do()"/{"don't"/0i}mj"(?<=mul\()\d{1,3},\d{1,3}(?=\))"`m{","/`nu*}mS
+
+"do()"/                                 "Split input on `do()`                  "#
+{"don't"/0i}mj                          "Take everything before each `don't()`  "#
+"(?<=mul\()\d{1,3},\d{1,3}(?=\))"`m     "Find all mul expressions               "#
+{                                       "Map over the matches:                  "#
+    ","/                                "   Split on comma                      "#
+    `n                                  "   Cast strings to ints                "#
+    u*                                  "   Multiply the two values             "#
+}m
+S                                       "Sum the products                       "#

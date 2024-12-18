@@ -1,0 +1,24 @@
+"Part 1:"#
+"F{:l2/PuUduAc@1+}mS"#
+
+"Explanation"#
+"F                    Split the input text on whitespace"#
+" {              }m   Execute the nested code on each line"#
+"  :l2/P                Partition the string in halves"#
+"       uU              Find the character shared between partitions"#
+"         du            Remove duplicates and unwrap the character"#
+"           Ac@1+       Find the 1-based index (=priority) of the char"#
+"                         in the string 'abc...xyzABC...XYZ012...'"#
+"                  S  Sum the priorities"#
+
+"Part 2:"#
+F3P{{U}/uAc@1+}mS
+
+"Explanation"#
+"F                  Split the input text on whitespace"#
+" 3P                Partition the lines into groups of 3"#
+"   {          }m   Execute the nested code on each partition"#
+"    {U}/u            Find the char shared by all 3 lines"#
+"         Ac@1+       Find the 1-based index (=priority) of the char"#
+"                       in the string 'abc...xyzABC...XYZ012...'"#
+"                S  Sum the priorities"#

@@ -23,7 +23,11 @@ def generate_docs(output_path=None):
             pairs = [(string.ascii_lowercase[i], param) for i, param in enumerate(params)]
 
             if len(func.params) > 0:
-                docs_string += " (" + ", ".join(f"`{name}: {param}`" for name, param in pairs) + ")"
+                docs_string += " (" + ", ".join(f"`` {name}: {param} ``" for name, param in pairs) + ")"
+
+            return_type = func.return_type
+            rt_string = "`void`" if return_type is None else ("`` " + stringify_type(return_type) + " ``") + ":"
+            docs_string += " -> " + rt_string
 
             desc = func.desc
             for name, param in pairs:
